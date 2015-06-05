@@ -105,7 +105,7 @@ public class ProfileController extends AnchorPane implements Initializable {
             Usuario loggedUser = application.getLoggedUser();
             loggedUser.setNombre(usuario.getText());
             loggedUser.setPasswd(contrasena.getText());
-            loggedUser.setPerfil(Integer.parseInt(perfil.getText()));
+//            loggedUser.setPerfil(Integer.parseInt(perfil.getText()));
             success.setText("Salvando datos");
         } else {
             success.setText("Las dos contraseñas no coinciden. Deben ser iguales");
