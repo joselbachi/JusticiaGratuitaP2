@@ -30,8 +30,8 @@ public class UserDao extends BaseDao {
         Usuario usuario;
         ResultSet rs = null;
         PreparedStatement checkUser = null;
-        String checkStr = "select id, perfil from user where "
-                + "USUARIO = ? AND PASSWD = ?";
+        String checkStr = "select idpersona, idperfil from usuario where "
+                + "IDUSUARIO = ? AND CONTRASENA = ?";
         //String checkStr = " select table_name from tables";
         
         try {
@@ -43,9 +43,9 @@ public class UserDao extends BaseDao {
             rs = checkUser.executeQuery();
 
             if (rs.next()) {
-                usuario = Usuario.of(Integer.toString(rs.getInt("id")));
-                usuario.setNombre(usu);
-                usuario.setPerfil(rs.getInt("perfil"));
+                usuario = Usuario.of(usu);
+                //usuario.setNombre(usu);
+                usuario.setPerfil(rs.getString("idperfil"));
                 return usuario;
             }
         } catch (NullPointerException nex) {
