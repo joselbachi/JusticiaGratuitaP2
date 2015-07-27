@@ -38,28 +38,28 @@ public class Usuario {
 
     private static final Map<String, Usuario> USERS = new HashMap<String, Usuario>();
 
-    public static Usuario of(String id) {
-        Usuario user = USERS.get(id);
+    public static Usuario of(String idusuario) {
+        Usuario user = USERS.get(idusuario);
         if (user == null) {
-            user = new Usuario(id);
-            USERS.put(id, user);
+            user = new Usuario(idusuario);
+            USERS.put(idusuario, user);
         }
         return user;
     }
 
-    private Usuario(String id) {
-        this.id = id;
+    private Usuario(String idusuario) {
+        this.idusuario = idusuario;
     }
-    private String id;
-
-    public String getId() {
-        return id;
-    }
-    
+    private String idusuario;
+    private String id = "";
     private String nombre = "";
     private String passwd = "";
-    private int perfil = 0;
+    private String perfil = "";
 
+
+    public String getIdUsuario() {
+        return idusuario;
+    }
     /**
      * @return el nombre de usuario
      */
@@ -92,14 +92,14 @@ public class Usuario {
      * Código del perfíl del usuario. Ver Usuario
      * @return 
      */
-    public int getPerfil() {
+    public String getPerfil() {
         return perfil;
     }
 
     /**
      * Código del perfíl del usuario. Ver Usuario
      */
-    public void setPerfil(int perfil) {
+    public void setPerfil(String perfil) {
         this.perfil = perfil;
     }
     

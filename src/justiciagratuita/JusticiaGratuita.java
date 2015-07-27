@@ -68,7 +68,7 @@ public class JusticiaGratuita extends Application {
 
     public boolean userLogging(String userId, String password) {
         loggedUser = Authenticator.validate(userId, password);
-        if (loggedUser != null && loggedUser.getId() != null ) {
+        if (loggedUser != null && loggedUser.getIdUsuario() != null ) {
             gotoProfile();
             return true;
         } else {

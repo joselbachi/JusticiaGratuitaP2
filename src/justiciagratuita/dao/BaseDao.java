@@ -22,14 +22,14 @@ public class BaseDao {
     private static final String DB_CONNECTION_PROT = "jdbc:h2:";
     private static final String DB_CONNECTION_URL = "I:\\Mis documentos\\NetBeansProjects\\JusticiaGratuitaDB\\JusticiaGratuitaDB";
     private static final String DB_CONNECTION_PAR = ";IFEXISTS=TRUE";
-    private static final String DB_USER = "justiciagr";
+    private static final String DB_USER =     "justiciagr";
     private static final String DB_PASSWORD = "justiciagr";
    
     /*
         Si CONEXIONUNICA sólo abrimos la conexión una vez, al inicial el programa y 
         la cerramos cuando se cierre el programa
     */
-    private static boolean CONEXIONUNICA = false;  // hay que mirarlo 
+    private static boolean CONEXIONUNICA = true;  // hay que mirarlo 
     private static boolean DB_IS_OK = true;
 
     protected Connection globalConnection; // Para que sea global no puede estar aquí.
@@ -80,7 +80,7 @@ public class BaseDao {
      * una vez al iniciar el programa
      */
     public void closeConexionUnica() {
-        CONEXIONUNICA = false;
+        CONEXIONUNICA = true;
         closeDBConnection(globalConnection);
     }
     

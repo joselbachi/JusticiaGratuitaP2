@@ -43,6 +43,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import justiciagratuita.JusticiaGratuita;
 import justiciagratuita.dao.BaseDao;
+import justiciagratuita.dao.UserDao;
+import justiciagratuita.modelo.Usuario;
 
 /**
  * Login Controller.

@@ -71,7 +71,7 @@ public class ProfileController extends AnchorPane implements Initializable {
     public void setApp(JusticiaGratuita application){
         this.application = application;
         Usuario loggedUser = application.getLoggedUser();
-        user.setText(loggedUser.getId());
+        user.setText(loggedUser.getIdUsuario());
         usuario.setText(loggedUser.getNombre());
         contrasena.setText(loggedUser.getPasswd());
 //        if (loggedUser.getPerfil() ) {
