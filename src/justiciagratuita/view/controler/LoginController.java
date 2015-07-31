@@ -43,8 +43,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import justiciagratuita.JusticiaGratuita;
 import justiciagratuita.dao.BaseDao;
-import justiciagratuita.dao.UserDao;
-import justiciagratuita.modelo.Usuario;
 
 /**
  * Login Controller.
@@ -52,7 +50,7 @@ import justiciagratuita.modelo.Usuario;
 public class LoginController extends AnchorPane implements Initializable {
 
     @FXML
-    TextField userId;
+    TextField user;
     @FXML
     PasswordField password;
     @FXML
@@ -70,7 +68,7 @@ public class LoginController extends AnchorPane implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         errorMessage.setText("");
-        userId.setPromptText("usuario");
+        user.setPromptText("usuario");
         password.setPromptText("contraseña");
         checkDatabase();
          
@@ -81,12 +79,12 @@ public class LoginController extends AnchorPane implements Initializable {
         if (application == null){
             // We are running in isolated FXML, possibly in Scene Builder.
             // NO-OP.
-            errorMessage.setText("Hola " + userId.getText());
+            errorMessage.setText("Hola " + user.getText());
         } else {
-            if (userId.getText().length() < 1 || password.getText().length() < 1) {
+            if (user.getText().length() < 1 || password.getText().length() < 1) {
                 errorMessage.setText("Debe introducir usuario y contraseña");
             } else {
-                if (!application.userLogging(userId.getText(), password.getText())){
+                if (!application.userLogging(user.getText(), password.getText())){
                     errorMessage.setText("Usuario/Contraseña incorrectos");
                 }
             }
@@ -96,7 +94,7 @@ public class LoginController extends AnchorPane implements Initializable {
     private void checkDatabase() {
         BaseDao db = new BaseDao();
         if (!db.databaseIsOK()) {
-            userId.setDisable(true);
+            user.setDisable(true);
             password.setDisable(true);
             errorMessage.setText("No se puede usar la base de datos. La está usando otra persona.");
             login.setDisable(true);

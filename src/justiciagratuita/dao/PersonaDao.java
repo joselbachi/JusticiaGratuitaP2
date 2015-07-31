@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import justiciagratuita.modelo.Usuario;
+import justiciagratuita.modelo.Persona;
 
 /**
  *
@@ -18,9 +18,9 @@ import justiciagratuita.modelo.Usuario;
  */
 public class PersonaDao extends BaseDao {
     
-    public Usuario getUsuarioByID(int id) {
+    public Persona getUsuarioByID(int id) {
 
-        Usuario usuario;
+        Persona usuario;
         ResultSet rs = null;
         PreparedStatement checkUser = null;
         String checkStr = "select ID, NOMBRE, PAPELLIDO, SAPELLIDO, IDTIPOIDENTIFICADOR, " +
@@ -37,10 +37,13 @@ public class PersonaDao extends BaseDao {
             rs = checkUser.executeQuery();
 
             if (rs.next()) {
-                usuario = Usuario.of("");
-
-                usuario.setNombre(rs.getString("nombre"));
-                usuario.setPerfil(rs.getString("idperfil"));
+                usuario = new Persona(id, rs.getString("nombre"), rs.getString("papellido"), rs.getString("sapellido"), rs.getString("idtipoidentificador"), rs.getString("identificador"));
+                usuario.setDireccion(rs.getString("direccion"));
+                usuario.setCodigoPostal(rs.getInt("codpostal"));
+                usuario.setLocalidad(rs.getString("localidad"));
+                usuario.setProvincia(rs.getString("provincia"));
+                usuario.setTelefono(rs.getString("telefono"));
+                usuario.setMovil(rs.getString("telmovil"));
                 return usuario;
             }
         } catch (NullPointerException nex) {

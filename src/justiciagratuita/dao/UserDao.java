@@ -46,6 +46,7 @@ public class UserDao extends BaseDao {
                 usuario = Usuario.of(usu);
                 //usuario.setNombre(usu);
                 usuario.setPerfil(rs.getString("idperfil"));
+                usuario.setIdPersona(rs.getInt("idpersona"));
                 return usuario;
             }
         } catch (NullPointerException nex) {

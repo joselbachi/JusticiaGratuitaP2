@@ -17,7 +17,7 @@
             <AnchorPane id="AnchorPane" prefHeight="180.0" prefWidth="430.0">
               <children>
                 <Label id="label1" layoutX="14.0" layoutY="67.0" text="Usuario" />
-                <TextField id="textField1" fx:id="userId" layoutY="86.0" prefWidth="415.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" />
+                <TextField id="textField1" fx:id="user" layoutY="86.0" prefWidth="415.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" />
                 <Label id="label1" layoutX="14.0" layoutY="139.0" text="Contraseña" />
                 <PasswordField id="passwordField1" fx:id="password" layoutY="157.0" prefWidth="415.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="0.0" />
                 <ImageView id="app-login-logo" layoutY="-12.0">

@@ -49,7 +49,7 @@ import justiciagratuita.modelo.Usuario;
 public class ProfileController extends AnchorPane implements Initializable {
 
     @FXML
-    private TextField user;
+    private TextField idPersona;
     @FXML
     private TextField usuario;
     @FXML
@@ -71,7 +71,7 @@ public class ProfileController extends AnchorPane implements Initializable {
     public void setApp(JusticiaGratuita application){
         this.application = application;
         Usuario loggedUser = application.getLoggedUser();
-        user.setText(loggedUser.getIdUsuario());
+        idPersona.setText(String.valueOf(loggedUser.getIdPersona()));
         usuario.setText(loggedUser.getNombre());
         contrasena.setText(loggedUser.getPasswd());
 //        if (loggedUser.getPerfil() ) {

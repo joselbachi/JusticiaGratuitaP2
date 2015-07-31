@@ -16,6 +16,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import justiciagratuita.dao.BaseDao;
+import justiciagratuita.dao.PersonaDao;
+import justiciagratuita.modelo.Persona;
 import justiciagratuita.modelo.Usuario;
 import justiciagratuita.security.Authenticator;
 import justiciagratuita.view.controler.LoginController;
@@ -66,9 +68,13 @@ public class JusticiaGratuita extends Application {
         return loggedUser;
     }
 
-    public boolean userLogging(String userId, String password) {
-        loggedUser = Authenticator.validate(userId, password);
-        if (loggedUser != null && loggedUser.getIdUsuario() != null ) {
+    public boolean userLogging(String user, String password) {
+        loggedUser = Authenticator.validate(user, password);
+        if (loggedUser != null && loggedUser.getUsuario() != null ) {
+            PersonaDao personDB = new PersonaDao();
+            Persona usu;
+            usu = personDB.getUsuarioByID(loggedUser.getIdPersona());
+            loggedUser.setPersona(usu);
             gotoProfile();
             return true;
         } else {

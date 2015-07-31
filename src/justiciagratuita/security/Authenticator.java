@@ -12,7 +12,7 @@ public class Authenticator {
         Usuario usu;
         
         usu = userDB.checkUser(user, password);
-        if (usu != null && usu.getIdUsuario() != null ) {
+        if (usu != null && usu.getUsuario() != null ) {
             return usu;
         } else {
             return null;

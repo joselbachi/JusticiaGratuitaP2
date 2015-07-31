@@ -59,7 +59,7 @@
                     <Insets top="2.0" fx:id="x3" />
                   </GridPane.margin>
                 </Label>
-                <TextField fx:id="user" editable="false" minWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <TextField fx:id="idPersona" editable="false" minWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Label id="Label" font="$x1" text="Usuario:" GridPane.columnIndex="0" GridPane.margin="$x3" GridPane.rowIndex="3" />
                 <TextField fx:id="usuario" minWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 <Label id="Label" font="$x1" text="Contraseña:" GridPane.columnIndex="0" GridPane.margin="$x3" GridPane.rowIndex="4" />
