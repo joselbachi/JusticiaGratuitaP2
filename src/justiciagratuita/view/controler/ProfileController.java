@@ -41,6 +41,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import justiciagratuita.JusticiaGratuita;
+import justiciagratuita.modelo.Persona;
 import justiciagratuita.modelo.Usuario;
 
 /**
@@ -57,6 +58,8 @@ public class ProfileController extends AnchorPane implements Initializable {
     @FXML
     private TextField contrasenaRep;
     @FXML
+    private TextField nombre;
+    @FXML
     private TextField perfil;
     @FXML
     private Hyperlink logout;
@@ -71,9 +74,12 @@ public class ProfileController extends AnchorPane implements Initializable {
     public void setApp(JusticiaGratuita application){
         this.application = application;
         Usuario loggedUser = application.getLoggedUser();
+        Persona person = loggedUser.getPersona();
         idPersona.setText(String.valueOf(loggedUser.getIdPersona()));
-        usuario.setText(loggedUser.getNombre());
+        usuario.setText(loggedUser.getUsuario());
         contrasena.setText(loggedUser.getPasswd());
+        nombre.setText(loggedUser.getNombre()); // person.getNombre();
+        
 //        if (loggedUser.getPerfil() ) {
   //          perfil.setText(String.valueOf(loggedUser.getPerfil()));
   //      }
@@ -103,7 +109,7 @@ public class ProfileController extends AnchorPane implements Initializable {
         }
         if (contrasena.getText().equals(contrasenaRep.getText())) {
             Usuario loggedUser = application.getLoggedUser();
-            loggedUser.setNombre(usuario.getText());
+            //loggedUser.setNombre(usuario.getText());
             loggedUser.setPasswd(contrasena.getText());
 //            loggedUser.setPerfil(Integer.parseInt(perfil.getText()));
             success.setText("Salvando datos");

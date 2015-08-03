@@ -111,6 +111,7 @@ public class Usuario {
 
     public void setPersona(Persona persona) {
         this.persona = persona;
+        this.nombre = persona.getNombre();
     }
 
     public int getIdPersona() {
