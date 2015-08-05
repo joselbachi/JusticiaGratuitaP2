@@ -75,7 +75,11 @@ public class JusticiaGratuita extends Application {
             Persona usu;
             usu = personDB.getUsuarioByID(loggedUser.getIdPersona());
             loggedUser.setPersona(usu);
-            gotoProfile();
+            if (user.equalsIgnoreCase(password)) {
+                gotoProfile(); 
+            } else {
+                gotoRootLay();
+            }
             return true;
         } else {
             return false;
@@ -85,6 +89,15 @@ public class JusticiaGratuita extends Application {
     public void userLogout() {
         loggedUser = null;
         gotoLogin();
+    }
+    
+    private void gotoRootLay() {
+        try {
+            ProfileController profile = (ProfileController) replaceSceneContent("view/profile.fxml");
+            profile.setApp(this);
+        } catch (Exception ex) {
+            Logger.getLogger(JusticiaGratuita.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void gotoProfile() {

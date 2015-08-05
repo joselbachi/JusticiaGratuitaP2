@@ -20,7 +20,7 @@ public class BaseDao {
     
     private static final String DB_DRIVER = "org.h2.Driver";
     private static final String DB_CONNECTION_PROT = "jdbc:h2:";
-    private static final String DB_CONNECTION_URL = "I:\\Mis documentos\\NetBeansProjects\\JusticiaGratuitaDB\\JusticiaGratuitaDB";
+    private static final String DB_CONNECTION_URL = "..\\JusticiaGratuitaDB\\JusticiaGratuitaDB";
     private static final String DB_CONNECTION_PAR = ";IFEXISTS=TRUE";
     private static final String DB_USER =     "justiciagr";
     private static final String DB_PASSWORD = "justiciagr";
