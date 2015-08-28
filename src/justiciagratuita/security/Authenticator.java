@@ -1,15 +1,15 @@
 
 package justiciagratuita.security;
 
-import justiciagratuita.dao.UserDao;
-import justiciagratuita.modelo.Usuario;
+import justiciagratuita.dao.UsuarioDao;
+import justiciagratuita.modelo.UsuarioDTO;
 
 
 public class Authenticator {
 
-    public static Usuario validate(String user, String password){
-        UserDao userDB = new UserDao();
-        Usuario usu;
+    public static UsuarioDTO validate(String user, String password){
+        UsuarioDao userDB = new UsuarioDao();
+        UsuarioDTO usu;
         
         usu = userDB.checkUser(user, password);
         if (usu != null && usu.getUsuario() != null ) {

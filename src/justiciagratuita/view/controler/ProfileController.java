@@ -31,23 +31,21 @@
  */
 package justiciagratuita.view.controler;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
 import justiciagratuita.JusticiaGratuita;
-import justiciagratuita.modelo.Persona;
-import justiciagratuita.modelo.Usuario;
+import justiciagratuita.modelo.PersonaDTO;
+import justiciagratuita.modelo.UsuarioDTO;
+import justiciagratuita.modelo.logica.Usuario;
 
 /**
  * Profile Controller.
  */
-public class ProfileController extends AnchorPane implements Initializable {
+public class ProfileController extends AnchorPane {
 
     @FXML
     private TextField idPersona;
@@ -63,9 +61,10 @@ public class ProfileController extends AnchorPane implements Initializable {
     private TextField perfil;
     @FXML
     private Hyperlink logout;
+    @FXML
+    private Hyperlink volver;
     @FXML 
-    private Button save;
-  
+    private Button save;  
     @FXML 
     private Label success;
     
@@ -73,8 +72,8 @@ public class ProfileController extends AnchorPane implements Initializable {
     
     public void setApp(JusticiaGratuita application){
         this.application = application;
-        Usuario loggedUser = application.getLoggedUser();
-        Persona person = loggedUser.getPersona();
+        UsuarioDTO loggedUser = application.getLoggedUser();
+        PersonaDTO person = loggedUser.getPersona();
         idPersona.setText(String.valueOf(loggedUser.getIdPersona()));
         usuario.setText(loggedUser.getUsuario());
         contrasena.setText(loggedUser.getPasswd());
@@ -86,10 +85,6 @@ public class ProfileController extends AnchorPane implements Initializable {
         success.setOpacity(0);
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    }
-    
     public void processLogout(ActionEvent event) {
         if (application == null){
             // We are running in isolated FXML, possibly in Scene Builder.
@@ -100,6 +95,16 @@ public class ProfileController extends AnchorPane implements Initializable {
         application.userLogout();
     }
     
+    public void processVolver(ActionEvent event) {
+        if (application == null){
+            // We are running in isolated FXML, possibly in Scene Builder.
+            // NO-OP.
+            return;
+        }
+        
+        application.userVolver();
+    }
+    
     public void saveProfile(ActionEvent event) {
         if (application == null){
             // We are running in isolated FXML, possibly in Scene Builder.
@@ -108,11 +113,18 @@ public class ProfileController extends AnchorPane implements Initializable {
             return;
         }
         if (contrasena.getText().equals(contrasenaRep.getText())) {
-            Usuario loggedUser = application.getLoggedUser();
+            UsuarioDTO loggedUser = application.getLoggedUser();
             //loggedUser.setNombre(usuario.getText());
             loggedUser.setPasswd(contrasena.getText());
 //            loggedUser.setPerfil(Integer.parseInt(perfil.getText()));
             success.setText("Salvando datos");
+            animateMessage();
+            Usuario usuaL = new Usuario();
+            if (usuaL.updateUser(loggedUser)) {
+                success.setText("Datos guardados");
+            } else {
+                success.setText("No se han podido salvar los datos.");
+            }
         } else {
             success.setText("Las dos contraseñas no coinciden. Deben ser iguales");
         }

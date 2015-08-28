@@ -10,7 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import justiciagratuita.modelo.Persona;
+import justiciagratuita.exceptions.DatabaseInUseException;
+import justiciagratuita.modelo.PersonaDTO;
 
 /**
  *
@@ -18,9 +19,9 @@ import justiciagratuita.modelo.Persona;
  */
 public class PersonaDao extends BaseDao {
     
-    public Persona getUsuarioByID(int id) {
+    public PersonaDTO getUsuarioByID(int id) {
 
-        Persona usuario;
+        PersonaDTO usuario;
         ResultSet rs = null;
         PreparedStatement checkUser = null;
         String checkStr = "select ID, NOMBRE, PAPELLIDO, SAPELLIDO, IDTIPOIDENTIFICADOR, " +
@@ -37,7 +38,7 @@ public class PersonaDao extends BaseDao {
             rs = checkUser.executeQuery();
 
             if (rs.next()) {
-                usuario = new Persona(id, rs.getString("nombre"), rs.getString("papellido"), rs.getString("sapellido"), rs.getString("idtipoidentificador"), rs.getString("identificador"));
+                usuario = new PersonaDTO(id, rs.getString("nombre"), rs.getString("papellido"), rs.getString("sapellido"), rs.getString("idtipoidentificador"), rs.getString("identificador"));
                 usuario.setDireccion(rs.getString("direccion"));
                 usuario.setCodigoPostal(rs.getInt("codpostal"));
                 usuario.setLocalidad(rs.getString("localidad"));
@@ -46,17 +47,19 @@ public class PersonaDao extends BaseDao {
                 usuario.setMovil(rs.getString("telmovil"));
                 return usuario;
             }
+        } catch (DatabaseInUseException dbEx) {
+            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
         } catch (NullPointerException nex) {
-            Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, nex);
+            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, nex);
         } catch (SQLException ex) {
-            Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (rs != null && !rs.isClosed()) {
                     rs.close();
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(UserDao.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
             }
             super.closeDBConnection(globalConnection);
         }

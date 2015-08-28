@@ -33,6 +33,8 @@ package justiciagratuita.view.controler;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -43,6 +45,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import justiciagratuita.JusticiaGratuita;
 import justiciagratuita.dao.BaseDao;
+import justiciagratuita.exceptions.DatabaseInUseException;
 
 /**
  * Login Controller.
@@ -70,7 +73,6 @@ public class LoginController extends AnchorPane implements Initializable {
         errorMessage.setText("");
         user.setPromptText("usuario");
         password.setPromptText("contraseña");
-        checkDatabase();
          
     }
     
@@ -91,13 +93,4 @@ public class LoginController extends AnchorPane implements Initializable {
         }
     }
     
-    private void checkDatabase() {
-        BaseDao db = new BaseDao();
-        if (!db.databaseIsOK()) {
-            user.setDisable(true);
-            password.setDisable(true);
-            errorMessage.setText("No se puede usar la base de datos. La está usando otra persona.");
-            login.setDisable(true);
-        }
-    }
 }

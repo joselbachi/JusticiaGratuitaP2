@@ -34,20 +34,24 @@ package justiciagratuita.modelo;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Usuario {
+public class UsuarioDTO extends BaseDTO {
 
-    private static final Map<String, Usuario> USERS = new HashMap<String, Usuario>();
+    private static final Map<String, UsuarioDTO> USERS = new HashMap<String, UsuarioDTO>();
 
-    public static Usuario of(String usuario) {
-        Usuario user = USERS.get(usuario);
+    public static UsuarioDTO of(String usuario) {
+        UsuarioDTO user = USERS.get(usuario);
         if (user == null) {
-            user = new Usuario(usuario);
+            user = new UsuarioDTO(usuario);
             USERS.put(usuario, user);
         }
         return user;
     }
 
-    private Usuario(String usuario) {
+    /**
+     * Nombre del usuario que se conecta
+     * @param usuario 
+     */
+    private UsuarioDTO(String usuario) {
         this.usuario = usuario;
     }
     private String usuario;
@@ -55,9 +59,13 @@ public class Usuario {
     private String passwd = "";
     private String perfil = "";
     private int idPersona = 0;
-    private Persona persona;
+    private PersonaDTO persona;
 
 
+    /**
+     * Devuelve el nombre/cadena_de_conexión del usuario 
+     * @return 
+     */
     public String getUsuario() {
         return usuario;
     }
@@ -90,7 +98,7 @@ public class Usuario {
     }
 
     /**
-     * Código del perfíl del usuario. Ver Usuario
+     * Código del perfíl del usuario. Ver UsuarioDTO
      * @return 
      */
     public String getPerfil() {
@@ -98,26 +106,34 @@ public class Usuario {
     }
 
     /**
-     * Código del perfíl del usuario. Ver Usuario
+     * Código del perfíl del usuario. Ver UsuarioDTO
      * @param perfil
      */
     public void setPerfil(String perfil) {
         this.perfil = perfil;
     }
 
-    public Persona getPersona() {
+    public PersonaDTO getPersona() {
         return persona;
     }
 
-    public void setPersona(Persona persona) {
+    public void setPersona(PersonaDTO persona) {
         this.persona = persona;
         this.nombre = persona.getNombre();
     }
 
+    /**
+     * Código de usuario, debe ser igual al Id de la persona
+     * @return 
+     */
     public int getIdPersona() {
         return idPersona;
     }
 
+    /**
+     * Establece el código de usuario=persona
+     * @param idPersona 
+     */
     public void setIdPersona(int idPersona) {
         this.idPersona = idPersona;
     }

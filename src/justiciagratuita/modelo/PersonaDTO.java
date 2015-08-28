@@ -5,7 +5,9 @@
  */
 package justiciagratuita.modelo;
 
+import java.util.Calendar;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -14,7 +16,7 @@ import javafx.beans.property.StringProperty;
  *
  * @author joseluis.bachiller
  */
-public class Persona {
+public class PersonaDTO extends BaseDTO {
     
     private final IntegerProperty id;
     private final StringProperty nombre;
@@ -23,20 +25,33 @@ public class Persona {
     private final StringProperty idTipoIdentificador;
     private final StringProperty identificador;
     private final StringProperty direccion = new SimpleStringProperty();
-    private final IntegerProperty codigoPostal = new SimpleIntegerProperty();
+    private IntegerProperty codigoPostal = new SimpleIntegerProperty();
     private final StringProperty localidad = new SimpleStringProperty();
     private final StringProperty provincia = new SimpleStringProperty();
     private final StringProperty telefono = new SimpleStringProperty();
     private final StringProperty movil = new SimpleStringProperty();
+    private Calendar birthday;
     
-    public Persona(int id, String nombre, String pApellido, String sapellido, String idTipoIdentificador, String identificador) {
+    /**
+     * Default constructor.
+     */
+    public PersonaDTO() {
+        this(-1, null, null, null, null, null);
+    }
+    
+    public PersonaDTO(int id, String nombre, String pApellido, String sapellido, String idTipoIdentificador, String identificador) {
         this.id = new SimpleIntegerProperty(id);
         this.nombre = new SimpleStringProperty(nombre);
         this.pApellido = new SimpleStringProperty(pApellido);
         this.sApellido = new SimpleStringProperty(sapellido);
         this.idTipoIdentificador = new SimpleStringProperty(idTipoIdentificador);
         this.identificador = new SimpleStringProperty(identificador);
+        // quitar después de las pruebas
+        this.codigoPostal = new SimpleIntegerProperty(42002);
+        
+        this.birthday = Calendar.getInstance();
     }
+    
 
     public String getMovil() {
         return movil.get();
@@ -168,8 +183,12 @@ public class Persona {
     public void setId(int id) {
         this.id.set(id);
     }
+    
+    public int getId () {
+        return id.intValue();
+    }
 
-    public IntegerProperty getId() {
+    public IntegerProperty idProperty() {
         return id;
     }
 
@@ -184,5 +203,16 @@ public class Persona {
     public StringProperty nombreProperty() {
         return nombre;
     }
+    
+    public Calendar getBirthday() {
+        return birthday;
+    }
 
+    public void setBirthday(Calendar birthday) {
+        this.birthday = birthday;
+    }
+
+    //public ObjectProperty<Calendar> birthdayProperty() {
+    //    return birthday;
+    //}
 }

@@ -13,6 +13,7 @@ package justiciagratuita.dao;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import justiciagratuita.exceptions.DatabaseInUseException;
 import org.h2.jdbc.JdbcSQLException;
 
 
@@ -35,7 +36,7 @@ public class BaseDao {
     protected Connection globalConnection; // Para que sea global no puede estar aquí.
     
    
-    protected Connection openDBConnection() {
+    protected Connection openDBConnection() throws DatabaseInUseException {
         Connection dbConnection = null;
 
         try {
@@ -52,6 +53,9 @@ public class BaseDao {
         } catch (JdbcSQLException ex) {
             DB_IS_OK = false;
             System.out.println(ex.getMessage());
+            if (ex.getErrorCode() == 90020 ) {
+                throw new DatabaseInUseException(DB_CONNECTION_PROT+DB_CONNECTION_URL+DB_CONNECTION_PAR);
+            }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -89,7 +93,7 @@ public class BaseDao {
      * si no hay problema devuelve true.
      * @return si la bd es accesible y no está abierta por otro usuario
      */
-    public boolean databaseIsOK() {
+    public boolean databaseIsOK() throws DatabaseInUseException {
         if (CONEXIONUNICA) {
             globalConnection = openDBConnection();
             return DB_IS_OK;
