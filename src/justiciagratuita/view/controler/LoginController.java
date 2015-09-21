@@ -33,8 +33,6 @@ package justiciagratuita.view.controler;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -44,8 +42,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import justiciagratuita.JusticiaGratuita;
-import justiciagratuita.dao.BaseDao;
-import justiciagratuita.exceptions.DatabaseInUseException;
 
 /**
  * Login Controller.

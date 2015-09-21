@@ -5,10 +5,11 @@
  */
 package justiciagratuita.modelo;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -18,6 +19,10 @@ import javafx.beans.property.StringProperty;
  */
 public class PersonaDTO extends BaseDTO {
     
+    public static final String NIF = "NIF";
+    public static final String NIE = "NIE";
+    public static final String PASAPORTE = "PASAPORTE";
+    
     private final IntegerProperty id;
     private final StringProperty nombre;
     private final StringProperty pApellido;
@@ -25,12 +30,12 @@ public class PersonaDTO extends BaseDTO {
     private final StringProperty idTipoIdentificador;
     private final StringProperty identificador;
     private final StringProperty direccion = new SimpleStringProperty();
-    private IntegerProperty codigoPostal = new SimpleIntegerProperty();
+    private final IntegerProperty codigoPostal;
     private final StringProperty localidad = new SimpleStringProperty();
     private final StringProperty provincia = new SimpleStringProperty();
     private final StringProperty telefono = new SimpleStringProperty();
     private final StringProperty movil = new SimpleStringProperty();
-    private Calendar birthday;
+    private final ObjectProperty<LocalDate> fecNac;
     
     /**
      * Default constructor.
@@ -49,7 +54,7 @@ public class PersonaDTO extends BaseDTO {
         // quitar después de las pruebas
         this.codigoPostal = new SimpleIntegerProperty(42002);
         
-        this.birthday = Calendar.getInstance();
+        this.fecNac = new SimpleObjectProperty<LocalDate>(LocalDate.now());
     }
     
 
@@ -154,9 +159,24 @@ public class PersonaDTO extends BaseDTO {
         return identificador;
     }
     
+    /**
+     * Devuelve la cadena completa del ducumento identificador (tipo ident + identificador)
+     * @return cadena de identificador o nulo si no existen datos.
+     */
+    public String getDocumento() {
+        if (idTipoIdentificador != null && identificador != null ) {
+            return idTipoIdentificador.get()+ "-" + identificador.get();
+        }
+        return null;
+    }
+    
 
     public String getsApellido() {
-        return sApellido.get();
+        if (sApellido != null) {
+            return sApellido.get();
+        } else {
+            return null;
+        }
     }
 
     public void setsApellido(String value) {
@@ -165,6 +185,14 @@ public class PersonaDTO extends BaseDTO {
 
     public StringProperty sApellidoProperty() {
         return sApellido;
+    }
+    
+    public String getApellidos() {
+        if (sApellido != null) {
+            return pApellido.get() + " " + sApellido.get();
+        } else {
+            return pApellido.get();
+        }
     }
     
 
@@ -204,15 +232,32 @@ public class PersonaDTO extends BaseDTO {
         return nombre;
     }
     
-    public Calendar getBirthday() {
-        return birthday;
+    public LocalDate getFecNac() {
+        return fecNac.get();
     }
 
-    public void setBirthday(Calendar birthday) {
-        this.birthday = birthday;
+    public void setFecNac(LocalDate birthday) {
+        this.fecNac.set(birthday);
     }
 
-    //public ObjectProperty<Calendar> birthdayProperty() {
-    //    return birthday;
-    //}
+    public ObjectProperty<LocalDate> fecNacProperty() {
+        return fecNac;
+    }
+    
+    public String apellNombreCompleto(){
+        if (util.ValidationsUtil.isCadenaVacia(sApellido.get())) {
+            return pApellido.get()+", "+nombre.get();
+        } else {
+            return pApellido.get()+" "+sApellido.get()+", "+nombre.get();
+        }
+    }
+    
+    public String nombreApellCompleto(){
+        if (util.ValidationsUtil.isCadenaVacia(sApellido.get())) {
+            return nombre.get()+", "+pApellido.get();
+        } else {
+            return nombre.get()+", "+pApellido.get()+" "+sApellido.get();
+        }
+    }
+
 }

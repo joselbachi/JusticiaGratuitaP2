@@ -31,9 +31,12 @@
  */
 package justiciagratuita.view.controler;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
@@ -45,7 +48,7 @@ import justiciagratuita.modelo.logica.Usuario;
 /**
  * Profile Controller.
  */
-public class ProfileController extends AnchorPane {
+public class ProfileController extends AnchorPane implements Initializable {
 
     @FXML
     private TextField idPersona;
@@ -145,5 +148,9 @@ public class ProfileController extends AnchorPane {
         ft.setFromValue(0.0);
         ft.setToValue(1);
         ft.play();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
     }
 }

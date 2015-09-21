@@ -5,10 +5,34 @@
  */
 package justiciagratuita.modelo;
 
+
+import java.time.LocalDateTime;
+
 /**
  *
  * @author joseluis.bachiller
  */
 public class BaseDTO {
+    
+    private LocalDateTime FecAlta;
+    private LocalDateTime FecModifica;
+
+    public LocalDateTime getFecAlta() {
+        return FecAlta;
+    }
+
+    public void setFecAlta(LocalDateTime FecAlta) {
+        this.FecAlta = FecAlta;
+    }
+
+    public LocalDateTime getFecModifica() {
+        return FecModifica;
+    }
+
+    public void setFecModifica(LocalDateTime FecModifica) {
+        this.FecModifica = FecModifica;
+    }
+    
+    
     
 }

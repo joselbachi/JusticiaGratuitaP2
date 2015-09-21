@@ -9,27 +9,44 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Dialogs;
-import javafx.scene.control.cell.PropertyValueFactory;
 import justiciagratuita.JusticiaGratuita;
-import justiciagratuita.modelo.PersonaDTO;
-import util.CalendarUtil;
+import justiciagratuita.modelo.ExpedienteDTO;
+import org.controlsfx.dialog.Dialogs;
 /**
  *
  * @author joseluis.bachiller
  */
 public class ExpedienteOwController {
     @FXML
-    private TableView<PersonaDTO> personTable;
+    private TableView<ExpedienteDTO> personTable;
     @FXML
-    private TableColumn<PersonaDTO, String> firstNameColumn;
+    private TableColumn<ExpedienteDTO, String> firstNameColumn;
     @FXML
-    private TableColumn<PersonaDTO, String> lastNameColumn;
+    private TableColumn<ExpedienteDTO, String> lastNameColumn;
+    @FXML
+    private TableColumn<ExpedienteDTO, String> numExpteColumn;
 
     @FXML
-    private Label firstNameLabel;
+    private Label solicitanteNombreField;
+    @FXML
+    private Label documentoSolicField;
+    @FXML
+    private Label juzgadoField;
+    @FXML
+    private Label letradoNombreField;
+    @FXML
+    private Label procuradorNombreField;
+    @FXML
+    private Label fecEntradaField;
+    @FXML
+    private Label asuntoField;
+    @FXML
+    private Label numExpedienteField;
+    @FXML
+    private Label numTurnoField;
+    
+ /*   @FXML
+    private Label nombreLabel;
     @FXML
     private Label lastNameLabel;
     @FXML
@@ -40,7 +57,7 @@ public class ExpedienteOwController {
     private Label cityLabel;
     @FXML
     private Label birthdayLabel;
-
+*/
     // Reference to the main application.
     private JusticiaGratuita mainApp;
 
@@ -59,23 +76,35 @@ public class ExpedienteOwController {
     private void initialize() {
 
         // Initialize the person table with the two columns. Para Java 7
-        firstNameColumn.setCellValueFactory(new PropertyValueFactory<PersonaDTO, String>("nombre"));
-        lastNameColumn.setCellValueFactory(new PropertyValueFactory<PersonaDTO, String>("pApellido"));
+        //firstNameColumn.setCellValueFactory(new PropertyValueFactory<PersonaDTO, String>("nombre"));
+        //lastNameColumn.setCellValueFactory(new PropertyValueFactory<PersonaDTO, String>("pApellido"));
+        // Initialize the person table with the two columns. Para Java 8
+        firstNameColumn.setCellValueFactory(
+            cellData -> cellData.getValue().solicitanteNombreProperty());
+        lastNameColumn.setCellValueFactory(
+            cellData -> cellData.getValue().solicitanteNombreProperty());
+        numExpteColumn.setCellValueFactory(
+            cellData -> cellData.getValue().numExpedienteProperty());
+        
 
         // Auto resize columns
         personTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        // clear person
-        showPersonDetails(null);
+        // clear expediente
+        showExpedienteDetails(null);
 
-        // Listen for selection changes
-        personTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PersonaDTO>() {
-            @Override
-            public void changed(ObservableValue<? extends PersonaDTO> observable,
-                    PersonaDTO oldValue, PersonaDTO newValue) {
-                showPersonDetails(newValue);
-            }
-        });
+        // Listen for selection changes. Para Java 7
+        //personTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<PersonaDTO>() {
+        //    @Override
+        //    public void changed(ObservableValue<? extends PersonaDTO> observable,
+        //            PersonaDTO oldValue, PersonaDTO newValue) {
+        //        showPersonDetails(newValue);
+        //    }
+        //});
+        
+        // Listen for selection changes and show the person details when changed. Para Java 8
+        personTable.getSelectionModel().selectedItemProperty().addListener(
+            (observable, oldValue, newValue) -> showExpedienteDetails(newValue));
     }
 
     /**
@@ -95,26 +124,47 @@ public class ExpedienteOwController {
      * person is null, all text fields are cleared.
      *
      * @param person the person or null
-     */
-    private void showPersonDetails(PersonaDTO person) {
-        if (person != null) {
+     */ 
+    private void showExpedienteDetails(ExpedienteDTO expediente) {
+        if (expediente != null) {
             // Fill the labels with info from the person object.
-            firstNameLabel.setText(person.getNombre());
-            lastNameLabel.setText(person.getsApellido());
-            
-            streetLabel.setText(person.getDireccion());
-            postalCodeLabel.setText(Integer.toString(person.getCodigoPostal()));
-            cityLabel.setText(person.getProvincia());
-            birthdayLabel.setText(CalendarUtil.format(person.getBirthday()));
 
+            solicitanteNombreField.setText(expediente.getSolicitanteNombre());
+            documentoSolicField.setText(expediente.getDocumentoSolic());
+            juzgadoField.setText(expediente.getJuzgado());
+            letradoNombreField.setText(expediente.getLetradoNombre());
+            procuradorNombreField.setText(expediente.getProcuradorNombre());
+            fecEntradaField.setText(expediente.getFecEntrada());
+            asuntoField.setText(expediente.getAsunto());
+            numExpedienteField.setText(String.valueOf(expediente.getNumExpediente()));
+            numTurnoField.setText(String.valueOf(expediente.getNumTurnoComp()));
+            /*            
+             nombreLabel.setText(expediente.getNombre());
+             lastNameLabel.setText(expediente.getApellidos());
+             streetLabel.setText(expediente.getDireccion());
+             postalCodeLabel.setText(Integer.toString(expediente.getCodigoPostal()));
+             cityLabel.setText(expediente.getProvincia());
+             birthdayLabel.setText(DateUtil.format(expediente.getFecNac()));
+             */
         } else {
             // Person is null, remove all the text.
-            firstNameLabel.setText("");
-            lastNameLabel.setText("");
-            streetLabel.setText("");
-            postalCodeLabel.setText("");
-            cityLabel.setText("");
-            birthdayLabel.setText("");
+/*
+             nombreLabel.setText("");
+             lastNameLabel.setText("");
+             streetLabel.setText("");
+             postalCodeLabel.setText("");
+             cityLabel.setText("");
+             birthdayLabel.setText("");
+             */
+            solicitanteNombreField.setText("");
+            documentoSolicField.setText("");
+            juzgadoField.setText("");
+            letradoNombreField.setText("");
+            procuradorNombreField.setText("");
+            fecEntradaField.setText("");
+            asuntoField.setText("");
+            numExpedienteField.setText("");
+            numTurnoField.setText("");
         }
     }
     
@@ -122,15 +172,22 @@ public class ExpedienteOwController {
      * Called when the user clicks on the delete button.
      */
     @FXML
-    private void handleDeletePerson() {
+    private void handleDeleteExpdte() {
         int selectedIndex = personTable.getSelectionModel().getSelectedIndex();
         if (selectedIndex >= 0) {
             personTable.getItems().remove(selectedIndex);
         } else {
-            Dialogs.showErrorDialog(mainApp.getPrimaryStage(),
-                                "Por favor, seleccione el expediente que desea borrar", 
-                                "No hay ningún expediente seleccionado", 
-                                "Error");
+            // Para java 7 con javafx-dialogs-0.0.4
+            //Dialogs.showErrorDialog(mainApp.getPrimaryStage(),
+            //                    "Por favor, seleccione el expediente que desea borrar", 
+            //                    "No hay ningún expediente seleccionado", 
+            //                    "Error");
+            // Nothing selected.
+        Dialogs.create()
+            .title("Nada seleccionado")
+            .masthead("No ha seleccionado ningún expediente.")
+            .message("Seleccione un expediente de la tabla.")
+            .showWarning();
                     
         }
     }
@@ -140,9 +197,9 @@ public class ExpedienteOwController {
      * details for a new person.
      */
     @FXML
-    private void handleNewPerson() {
-        PersonaDTO tempPerson = new PersonaDTO();
-        boolean okClicked = mainApp.showPersonEditDialog(tempPerson);
+    private void handleNewExpte() {
+        ExpedienteDTO tempPerson = new ExpedienteDTO();
+        boolean okClicked = mainApp.showExpedienteEditDialog(tempPerson);
         if (okClicked) {
             mainApp.getPersonData().add(tempPerson);
         }
@@ -153,20 +210,25 @@ public class ExpedienteOwController {
      * details for the selected person.
      */
     @FXML
-    private void handleEditPerson() {
-        PersonaDTO selectedPerson = personTable.getSelectionModel().getSelectedItem();
-        if (selectedPerson != null) {
-            boolean okClicked = mainApp.showPersonEditDialog(selectedPerson);
+    private void handleEditExpte() {
+        ExpedienteDTO selectedExped = personTable.getSelectionModel().getSelectedItem();
+        if (selectedExped != null) {
+            boolean okClicked = mainApp.showExpedienteEditDialog(selectedExped);
             if (okClicked) {
                 refreshPersonTable();
-                showPersonDetails(selectedPerson);
+                showExpedienteDetails(selectedExped);
             }
 
         } else {
             // Nothing selected
-            Dialogs.showWarningDialog(mainApp.getPrimaryStage(),
-                    "Please select a person in the table.",
-                    "No Person Selected", "No Selection");
+            //Dialogs.showWarningDialog(mainApp.getPrimaryStage(),
+            //        "Please select a person in the table.",
+            //        "No Person Selected", "No Selection");
+            Dialogs.create()
+                .title("Nada seleccionado")
+                .masthead("No ha seleccionado ningún expediente.")
+                .message("Seleccione un expediente de la tabla.")
+                .showWarning();
         }
     }
 
@@ -187,5 +249,7 @@ public class ExpedienteOwController {
         // Must set the selected index again (see http://javafx-jira.kenai.com/browse/RT-26291)
         personTable.getSelectionModel().select(selectedIndex);
     }
+    
+
 
 }

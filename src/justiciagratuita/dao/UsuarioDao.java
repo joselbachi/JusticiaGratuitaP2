@@ -30,18 +30,18 @@ public class UsuarioDao extends BaseDao {
 
         UsuarioDTO usuario;
         ResultSet rs = null;
-        PreparedStatement checkUser = null;
+        PreparedStatement ppStatemt = null;
         String checkStr = "select idpersona, idperfil from usuario where "
                 + "IDUSUARIO = ? AND CONTRASENA = ?";
         //String checkStr = " select table_name from tables";
         
         try {
             globalConnection = super.openDBConnection();
-            checkUser = globalConnection.prepareStatement(checkStr);
-            checkUser.setString(1, usu);
-            checkUser.setString(2, contra);
+            ppStatemt = globalConnection.prepareStatement(checkStr);
+            ppStatemt.setString(1, usu);
+            ppStatemt.setString(2, contra);
 
-            rs = checkUser.executeQuery();
+            rs = ppStatemt.executeQuery();
 
             if (rs.next()) {
                 usuario = UsuarioDTO.of(usu);
@@ -61,6 +61,9 @@ public class UsuarioDao extends BaseDao {
                 if (rs != null && !rs.isClosed()) {
                     rs.close();
                 }
+                if (ppStatemt != null && !ppStatemt.isClosed() ) {
+                    ppStatemt.close();
+                }
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -74,7 +77,7 @@ public class UsuarioDao extends BaseDao {
         ResultSet rs = null;
         PreparedStatement updateUser = null;
         int result = 0;
-        String checkStr = "update USUARIO set IDUSUARIO = ?, CONTRASENA = ?, IDPERFIL = ?  "
+        String checkStr = "update USUARIO set IDUSUARIO = ?, CONTRASENA = ?, IDPERFIL = ?, FECMODIFICA = ?  "
                 + "where idpersona = ?";
         
         try {
@@ -84,6 +87,7 @@ public class UsuarioDao extends BaseDao {
             updateUser.setString(2, user.getPasswd());
             updateUser.setString(3, user.getPerfil());
             updateUser.setInt(4, user.getIdPersona());
+            updateUser.setTimestamp(5, java.sql.Timestamp.from(java.time.Instant.now()));
 
             result = updateUser.executeUpdate();
 
@@ -98,6 +102,9 @@ public class UsuarioDao extends BaseDao {
             try {
                 if (rs != null && !rs.isClosed()) {
                     rs.close();
+                }
+                if (updateUser != null && !updateUser.isClosed() ) {
+                    updateUser.close();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);

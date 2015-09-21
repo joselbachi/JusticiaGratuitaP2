@@ -5,6 +5,7 @@
  */
 package justiciagratuita.view.controler;
 
+import java.util.List;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,6 +13,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
+import justiciagratuita.dao.PersonaDao;
+import justiciagratuita.dao.TauxiliaresDao;
+import justiciagratuita.modelo.ExpedienteDTO;
 import justiciagratuita.modelo.PersonaDTO;
 import org.controlsfx.dialog.Dialogs;
 import util.DateUtil;
@@ -22,14 +26,12 @@ import util.ValidationsUtil;
  *
  * @author joseluis.bachiller
  */
-public class PersonEditDialogController {
+public class ExpedienteEditDialogController {
 
     @FXML
     private TextField nombreField;
     @FXML
-    private TextField pApellidoField;
-    @FXML
-    private TextField sApellidoField;
+    private TextField apellidosField;
     @FXML
     private ComboBox idTipoIdentificadorField;
     @FXML
@@ -50,23 +52,20 @@ public class PersonEditDialogController {
     private TextField fecNacField;
  
     private Stage dialogStage;
-    private PersonaDTO person;
+    private ExpedienteDTO expdte;
     private boolean okClicked = false;
     
-    ObservableList<String> options = FXCollections.observableArrayList(
-        PersonaDTO.NIF,
-        PersonaDTO.NIE,
-        PersonaDTO.PASAPORTE
-    );
-
     /**
      * Initializes the controller class. This method is automatically called
      * after the fxml file has been loaded.
      */
     @FXML
     private void initialize() {
-        idTipoIdentificadorField.setItems(options);
+        idTipoIdentificadorField.setItems(itemsTIdentificador());
         idTipoIdentificadorField.setPromptText("Tipo doc.");
+        nombreField.setEditable(false);
+        apellidosField.setEditable(false);
+        
         // control
         identificadorField.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             if (!newValue) {
@@ -76,8 +75,12 @@ public class PersonEditDialogController {
                         .title("Error en el identificador")
                         .masthead("Hay errores en algunos campos")
                         .message(ValidationsUtil.validaDocumento(identificadorField.getText(), (String) idTipoIdentificadorField.getValue())+
-                                "\nPor favor introduzca un "+ (String )idTipoIdentificadorField.getValue() + " válido")
+                                "\nPor favor introduzca un "+ (String )idTipoIdentificadorField.getValue() + " válido.")
                         .showError();
+                    identificadorField.requestFocus();
+                            // Hacer que el foco se quede en el campo, si hay error
+                } else {
+                    recuperaPersona((String) idTipoIdentificadorField.getValue(), identificadorField.getText());
                 }
             }
         });
@@ -92,27 +95,27 @@ public class PersonEditDialogController {
     }
 
     /**
-     * Sets the person to be edited in the dialog.
+     * Sets the expediente to be edited in the dialog.
      * 
-     * @param person
+     * @param expdte
      */
-    public void setPerson(PersonaDTO person) {
-        this.person = person;
+    public void setExpediente(ExpedienteDTO expdte) {
+        this.expdte = expdte;
 
-      nombreField.setText(person.getNombre());
-      pApellidoField.setText(person.getpApellido());
-      sApellidoField.setText(person.getsApellido());
+      nombreField.setText(expdte.getSolicitanteNombre());
+      apellidosField.setText(expdte.getSolicitanteNombre());
       //idTipoIdentificadorField.setItems(options);
-      idTipoIdentificadorField.setValue(person.getIdTipoIdentificador());
-      identificadorField.setText(person.getIdentificador());
-      direccionField.setText(person.getDireccion());
-      codigoPostalField.setText(Integer.toString(person.getCodigoPostal()));
-      localidadField.setText(person.getLocalidad());
-      provinciaField.setText(person.getProvincia());
-      telefonoField.setText(person.getTelefono());
-      movilField.setText(person.getMovil());
-      fecNacField.setText(DateUtil.format(person.getFecNac()));
+    /*  idTipoIdentificadorField.setValue(expdte.getIdTipoIdentificador());
+      identificadorField.setText(expdte.getIdentificador());
+      direccionField.setText(expdte.getDireccion());
+      codigoPostalField.setText(Integer.toString(expdte.getCodigoPostal()));
+      localidadField.setText(expdte.getLocalidad());
+      provinciaField.setText(expdte.getProvincia());
+      telefonoField.setText(expdte.getTelefono());
+      movilField.setText(expdte.getMovil());
+      fecNacField.setText(DateUtil.format(expdte.getFecNac()));
       fecNacField.setPromptText("dd-mm-yyyy");
+      */
     }
 
     /**
@@ -129,20 +132,25 @@ public class PersonEditDialogController {
     @FXML
     private void handleOk() {
         if (isInputValid()) {
-            person.setNombre(nombreField.getText());
-            person.setpApellido(pApellidoField.getText());
-            person.setDireccion(direccionField.getText());
-            person.setCodigoPostal(Integer.parseInt(codigoPostalField.getText()));
-            person.setLocalidad(localidadField.getText());
-            person.setFecNac(DateUtil.parse(fecNacField.getText()));
+         /*   expdte.setNombre(nombreField.getText());
+            expdte.setpApellido(pApellidoField.getText());
+            expdte.setDireccion(direccionField.getText());
+            expdte.setCodigoPostal(Integer.parseInt(codigoPostalField.getText()));
+            expdte.setLocalidad(localidadField.getText());
+            expdte.setFecNac(DateUtil.parse(fecNacField.getText()));
 
-            person.setsApellido(sApellidoField.getText());
-            person.setIdTipoIdentificador((String) idTipoIdentificadorField.getValue());
-            person.setIdentificador(identificadorField.getText());
-            person.setProvincia(provinciaField.getText());
-            person.setTelefono(telefonoField.getText());
-            person.setMovil(movilField.getText());
-
+            expdte.setsApellido(sApellidoField.getText());
+            expdte.setIdTipoIdentificador((String) idTipoIdentificadorField.getValue());
+            expdte.setIdentificador(identificadorField.getText());
+            expdte.setProvincia(provinciaField.getText());
+            expdte.setTelefono(telefonoField.getText());
+            expdte.setMovil(movilField.getText());
+*/
+            Dialogs.create()
+                .title("Falta programar")
+                .masthead("Aún no está programada la acción")
+                .message("Aún no está programada la acción")
+                .showError();
 
             okClicked = true;
             dialogStage.close();
@@ -177,9 +185,11 @@ public class PersonEditDialogController {
         if (nombreField.getText() == null || nombreField.getText().length() == 0) {
             errorMessage += "El nombre está vacío!\n"; 
         }
+        /*
         if (pApellidoField.getText() == null || pApellidoField.getText().length() == 0) {
             errorMessage += "El primer apellido está vacío!\n"; 
         }
+        */
         if (direccionField.getText() == null || direccionField.getText().length() == 0) {
             errorMessage += "La dirección está vacía!\n"; 
         }
@@ -234,4 +244,28 @@ public class PersonEditDialogController {
         ValidationsUtil valida = new ValidationsUtil();
         identificadorField.setText(valida.preparaDocumento(identificadorField.getText()));
     }
+    
+    private ObservableList<String> itemsTIdentificador() {
+        TauxiliaresDao db = new TauxiliaresDao();
+        List<String>  list =   db.getListTipoDocumentoStr();
+        ObservableList<String> options = FXCollections.observableArrayList(list);
+        
+        return options;
+    }
+    
+    private void recuperaPersona(String tipoDoc, String documento) {
+        PersonaDao per = new PersonaDao();
+        PersonaDTO solic = per.getPersonaByDocu(tipoDoc, documento);
+        if (solic == null) {
+           Dialogs.create()
+                .title("Falta programación")
+                .masthead("Falta código por programar.")
+                .message("Tenemos que llamar a la pantalla para crear la persona")
+                .showError(); 
+        } else {
+            nombreField.setText(solic.getNombre());
+            apellidosField.setText(solic.getApellidos());
+        }
+    }
 }
+

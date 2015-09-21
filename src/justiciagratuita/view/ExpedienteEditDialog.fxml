@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="524.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="justiciagratuita.view.controler.PersonEditDialogController">
+<AnchorPane id="AnchorPane" prefHeight="524.0" prefWidth="600.0" styleClass="background" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="justiciagratuita.view.controler.ExpedienteEditDialogController">
    <children>
       <GridPane layoutX="13.0" layoutY="8.0" prefHeight="436.0" prefWidth="577.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0">
         <columnConstraints>
@@ -30,7 +30,7 @@
         </rowConstraints>
          <children>
             <Label styleClass="label-bright" text="Nombre: " GridPane.rowIndex="2" />
-            <Label styleClass="label-bright" text="P. Apellido:" GridPane.rowIndex="3" />
+            <Label styleClass="label-bright" text="Apellidos:" GridPane.rowIndex="3" />
             <Label styleClass="label-bright" text="S. Apellido:" GridPane.rowIndex="4" />
             <Label styleClass="label-bright" text="Tipo Identificador:" />
             <Label styleClass="label-bright" text="Identificador:" GridPane.rowIndex="1" />
@@ -44,7 +44,7 @@
             <ComboBox fx:id="idTipoIdentificadorField" prefWidth="150.0" GridPane.columnIndex="1" />
             <TextField fx:id="identificadorField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="nombreField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <TextField fx:id="pApellidoField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextField fx:id="apellidosField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextField fx:id="sApellidoField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <TextField fx:id="direccionField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <TextField fx:id="codigoPostalField" GridPane.columnIndex="1" GridPane.rowIndex="6" />

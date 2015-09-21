@@ -19,44 +19,102 @@ import justiciagratuita.modelo.PersonaDTO;
  */
 public class PersonaDao extends BaseDao {
     
-    public PersonaDTO getUsuarioByID(int id) {
+    public PersonaDTO getPersonaByID(int id) {
 
-        PersonaDTO usuario;
+        PersonaDTO objeto;
         ResultSet rs = null;
-        PreparedStatement checkUser = null;
+        PreparedStatement ppStatemt = null;
         String checkStr = "select ID, NOMBRE, PAPELLIDO, SAPELLIDO, IDTIPOIDENTIFICADOR, " +
                                 " IDENTIFICADOR, DIRECCION, CODPOSTAL, LOCALIDAD, PROVINCIA, " +
-                                " TELEFONO, TELMOVIL "            
+                                " TELEFONO, TELMOVIL, FECNAC, FECALTA, FECMODIFICA "
                 + " from PERSONA where "
                 + "ID = ? ";
         
         try {
             globalConnection = super.openDBConnection();
-            checkUser = globalConnection.prepareStatement(checkStr);
-            checkUser.setInt(1, id);
+            ppStatemt = globalConnection.prepareStatement(checkStr);
+            ppStatemt.setInt(1, id);
 
-            rs = checkUser.executeQuery();
+            rs = ppStatemt.executeQuery();
 
             if (rs.next()) {
-                usuario = new PersonaDTO(id, rs.getString("nombre"), rs.getString("papellido"), rs.getString("sapellido"), rs.getString("idtipoidentificador"), rs.getString("identificador"));
-                usuario.setDireccion(rs.getString("direccion"));
-                usuario.setCodigoPostal(rs.getInt("codpostal"));
-                usuario.setLocalidad(rs.getString("localidad"));
-                usuario.setProvincia(rs.getString("provincia"));
-                usuario.setTelefono(rs.getString("telefono"));
-                usuario.setMovil(rs.getString("telmovil"));
-                return usuario;
+                objeto = new PersonaDTO(rs.getInt("id"), rs.getString("nombre"), rs.getString("papellido"), rs.getString("sapellido"), rs.getString("idtipoidentificador"), rs.getString("identificador"));
+                objeto.setDireccion(rs.getString("direccion"));
+                objeto.setCodigoPostal(rs.getInt("codpostal"));
+                objeto.setLocalidad(rs.getString("localidad"));
+                objeto.setProvincia(rs.getString("provincia"));
+                objeto.setTelefono(rs.getString("telefono"));
+                objeto.setMovil(rs.getString("telmovil"));
+                objeto.setFecNac(util.DateUtil.convertToEntityAttribute(rs.getDate("fecnac")));
+                objeto.setFecAlta(util.DateUtil.convertToEntityAttribute(rs.getTimestamp("FECALTA")));
+                objeto.setFecModifica(util.DateUtil.convertToEntityAttribute(rs.getTimestamp("FECMODIFICA")));
+                return objeto;
             }
-        } catch (DatabaseInUseException dbEx) {
+        } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
             Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
-        } catch (NullPointerException nex) {
-            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, nex);
-        } catch (SQLException ex) {
-            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 if (rs != null && !rs.isClosed()) {
                     rs.close();
+                }
+                if (ppStatemt != null && !ppStatemt.isClosed() ) {
+                    ppStatemt.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            super.closeDBConnection(globalConnection);
+        }
+        return null;
+    }
+    
+    /**
+     * Recupera una persona de la tabla persona identificada por su documento
+     * @param documento
+     * @return 
+     */
+    public PersonaDTO getPersonaByDocu(String tipoDoc, String documento) {
+
+        PersonaDTO objeto;
+        ResultSet rs = null;
+        PreparedStatement ppStatemt = null;
+        String checkStr = "select ID, NOMBRE, PAPELLIDO, SAPELLIDO, IDTIPOIDENTIFICADOR, " +
+                                " IDENTIFICADOR, DIRECCION, CODPOSTAL, LOCALIDAD, PROVINCIA, " +
+                                " TELEFONO, TELMOVIL, FECNAC, FECALTA, FECMODIFICA "
+                + " from PERSONA "
+                + " where IDTIPOIDENTIFICADOR = ? "
+                + " and  IDENTIFICADOR = ?";
+        
+        try {
+            globalConnection = super.openDBConnection();
+            ppStatemt = globalConnection.prepareStatement(checkStr);
+            ppStatemt.setString(1, tipoDoc);
+            ppStatemt.setString(2, documento);
+
+            rs = ppStatemt.executeQuery();
+
+            if (rs.next()) {
+                objeto = new PersonaDTO(rs.getInt("id"), rs.getString("nombre"), rs.getString("papellido"), rs.getString("sapellido"), rs.getString("idtipoidentificador"), rs.getString("identificador"));
+                objeto.setDireccion(rs.getString("direccion"));
+                objeto.setCodigoPostal(rs.getInt("codpostal"));
+                objeto.setLocalidad(rs.getString("localidad"));
+                objeto.setProvincia(rs.getString("provincia"));
+                objeto.setTelefono(rs.getString("telefono"));
+                objeto.setMovil(rs.getString("telmovil"));
+                objeto.setFecNac(util.DateUtil.convertToEntityAttribute(rs.getDate("fecnac")));
+                objeto.setFecAlta(util.DateUtil.convertToEntityAttribute(rs.getTimestamp("FECALTA")));
+                objeto.setFecModifica(util.DateUtil.convertToEntityAttribute(rs.getTimestamp("FECMODIFICA")));
+                return objeto;
+            }
+        } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
+            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (ppStatemt != null && !ppStatemt.isClosed() ) {
+                    ppStatemt.close();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);

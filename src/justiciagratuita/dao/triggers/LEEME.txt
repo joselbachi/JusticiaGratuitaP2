@@ -1,0 +1,5 @@
+/*Los triggers no están activos.*/
+
+/*No he creado ningún trigger porque*/ es problemático controlar el
+classpath para que se ejecuten tanto desde la aplicación 
+como desde SQLWorkBench (TOAD), desde el propio netBeans o un java a parte.
