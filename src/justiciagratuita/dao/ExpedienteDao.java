@@ -27,11 +27,13 @@ public class ExpedienteDao extends BaseDao {
         ExpedienteDTO objeto;
         ResultSet rs = null;
         PreparedStatement ppStatemt = null;
-        String checkStr = "ID, IDSOLICITANTE, IDJUZGADO, IDLETRADO, IDPROCURADOR, NUMTURNO, "
+        String checkStr = "EXPEDIENTE.ID, IDSOLICITANTE, IDJUZGADO, IDLETRADO, IDPROCURADOR, NUMTURNO, "
                 + "ANYO, IDCOMISION, VIOLENCIA, FECENTRADACOL, FECENVIODEL, FECENTRADADEL, FECRESOLUCION, "
-                + "FECIMPUGNACION, OBSERVACIONES, IDESTADO, FECALTA, FECMODIFICA "
-                + " from EXPEDIENTE where "
-                + "ID = ? ";
+                + "FECIMPUGNACION, OBSERVACIONES, IDESTADO, FECALTA, FECMODIFICA, "
+                + "TASUNTO.descripcion as asunto "
+                + "from EXPEDIENTE, Tasunto "
+                + "where expediente.idasunto = tasunto.id "
+                + "and ID = ? ";
 
         try {
             globalConnection = super.openDBConnection();
@@ -44,7 +46,7 @@ public class ExpedienteDao extends BaseDao {
                 PersonaDao per = new PersonaDao();
                 objeto = new ExpedienteDTO(rs.getInt("id"), rs.getInt("idsolicitante"), rs.getInt("numTurno"), 
                         rs.getInt("anyo"), util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecEntradaCol")), 
-                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("id")));
+                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("id")), rs.getString("asunto"));
                 objeto.setIdJuzgado(rs.getInt("idJuzgado"));
                 objeto.setIdLetrado(rs.getInt("idLetrado"));
                 objeto.setIdProcurador(rs.getInt("idProcurador"));
@@ -84,11 +86,13 @@ public class ExpedienteDao extends BaseDao {
         ExpedienteDTO objeto; 
         ResultSet rs = null;
         PreparedStatement ppStatemt = null;
-        String checkStr = "SELECT ID, IDSOLICITANTE, IDJUZGADO, IDLETRADO, IDPROCURADOR, NUMTURNO, "
+        String checkStr = "SELECT EXPEDIENTE.ID, IDSOLICITANTE, IDJUZGADO, IDLETRADO, IDPROCURADOR, NUMTURNO, "
                 + "ANYO, IDCOMISION, VIOLENCIA, FECENTRADACOL, FECENVIODEL, FECENTRADADEL, FECRESOLUCION, "
-                + "FECIMPUGNACION, OBSERVACIONES, IDESTADO, FECALTA, FECMODIFICA "
-                + "from EXPEDIENTE where "
-                + "IDESTADO = ? ";
+                + "FECIMPUGNACION, OBSERVACIONES, IDESTADO, FECALTA, FECMODIFICA, "
+                + "TASUNTO.descripcion as asunto "
+                + "from EXPEDIENTE, Tasunto "
+                + "where expediente.idasunto = tasunto.id "
+                + "and IDESTADO = ? ";
 
         try {
             globalConnection = super.openDBConnection();
@@ -102,7 +106,7 @@ public class ExpedienteDao extends BaseDao {
                 
                 objeto = new ExpedienteDTO(rs.getInt("id"), rs.getInt("idsolicitante"), rs.getInt("numTurno"), 
                         rs.getInt("anyo"), util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecEntradaCol")), 
-                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("id")));
+                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("id")), rs.getString("asunto"));
 // Por ahora sólo necesito la lista
 /*                objeto.setIdJuzgado(rs.getInt("idJuzgado"));
                 objeto.setIdLetrado(rs.getInt("idLetrado"));
@@ -151,11 +155,13 @@ public class ExpedienteDao extends BaseDao {
         ExpedienteDTO objeto; 
         ResultSet rs = null;
         PreparedStatement ppStatemt = null;
-        String checkStr = "ID, IDSOLICITANTE, IDJUZGADO, IDLETRADO, IDPROCURADOR, NUMTURNO, "
+        String checkStr = "SELECT EXPEDIENTE.ID, IDSOLICITANTE, IDJUZGADO, IDLETRADO, IDPROCURADOR, NUMTURNO, "
                 + "ANYO, IDCOMISION, VIOLENCIA, FECENTRADACOL, FECENVIODEL, FECENTRADADEL, FECRESOLUCION, "
-                + "FECIMPUGNACION, OBSERVACIONES, IDESTADO, FECALTA, FECMODIFICA "
-                + " from EXPEDIENTE where "
-                + "IDESTADO = ? ";
+                + "FECIMPUGNACION, OBSERVACIONES, IDESTADO, FECALTA, FECMODIFICA, "
+                + "TASUNTO.descripcion as asunto "
+                + "from EXPEDIENTE, Tasunto "
+                + "where expediente.idasunto = tasunto.id "
+                + "and IDESTADO = ? ";
 
         try {
             globalConnection = super.openDBConnection();
@@ -170,7 +176,7 @@ public class ExpedienteDao extends BaseDao {
                 PersonaDao per = new PersonaDao();
                 objeto = new ExpedienteDTO(rs.getInt("id"), rs.getInt("idsolicitante"), rs.getInt("numTurno"), 
                         rs.getInt("anyo"), util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecEntradaCol")), 
-                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("id")));
+                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("id")), rs.getString("asunto"));
                 PersonaDTO solic = new PersonaDTO();
 // Por ahora sólo necesito la lista
 /*                objeto.setIdJuzgado(rs.getInt("idJuzgado"));

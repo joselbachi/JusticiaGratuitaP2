@@ -30,7 +30,7 @@ public class ExpedienteDTO extends BaseDTO {
     private final IntegerProperty numTurno; // sólo número secuencial.
     private final IntegerProperty numExped; // sólo número secuencial.
     private final IntegerProperty anyo;
-    private final StringProperty asunto = new SimpleStringProperty();
+    private final StringProperty asunto;
     private final IntegerProperty idComision;
     private final BooleanProperty violencia;
     private final ObjectProperty<LocalDateTime> fecEntradaCol;
@@ -62,10 +62,10 @@ public class ExpedienteDTO extends BaseDTO {
      * Default constructor.
      */
     public ExpedienteDTO() {
-        this(-1, -1, -1, -1, null, -1, null);
+        this(-1, -1, -1, -1, null, -1, null, null);
     }
 
-    public ExpedienteDTO(int id, int idsolictante, int numTurno, int anyo, LocalDateTime fecEntradaCol, int idEstado, PersonaDTO solicitante) {
+    public ExpedienteDTO(int id, int idsolictante, int numTurno, int anyo, LocalDateTime fecEntradaCol, int idEstado, PersonaDTO solicitante, String asunto) {
         this.id = new SimpleIntegerProperty(id);
         this.idSolicitante = new SimpleIntegerProperty(idsolictante);
         this.idJuzgado = new SimpleIntegerProperty();
@@ -83,9 +83,11 @@ public class ExpedienteDTO extends BaseDTO {
         this.observaciones = new  SimpleStringProperty();
         this.idEstado = new SimpleIntegerProperty(idEstado);
         this.numExped = new SimpleIntegerProperty();
-        this.numTurnoComp = new SimpleStringProperty(this.anyo.intValue()+"/"+this.numTurno.intValue());
-        this.numExpediente = new SimpleStringProperty(this.anyo.intValue()+"/"+this.numExped.intValue());
+        this.numTurnoComp = new SimpleStringProperty(this.anyo.intValue()+"/"+String.format("%04d",this.numTurno.intValue()));
+        this.numExpediente = new SimpleStringProperty(this.anyo.intValue()+"/"+String.format("%04d",this.numExped.intValue()));
+
         this.setSolicitante(solicitante);
+        this.asunto = new SimpleStringProperty(asunto);
     }
 
     public int getId() {
@@ -532,6 +534,10 @@ public class ExpedienteDTO extends BaseDTO {
 
     public String getAsunto() {
         return asunto.get();
+    }
+    
+    public void setAsunto() {
+        
     }
 
 

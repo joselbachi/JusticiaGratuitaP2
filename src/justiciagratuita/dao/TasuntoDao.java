@@ -8,8 +8,6 @@ package justiciagratuita.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import justiciagratuita.exceptions.DatabaseInUseException;
@@ -18,59 +16,14 @@ import justiciagratuita.exceptions.DatabaseInUseException;
  *
  * @author joseluis.bachiller
  */
-public class TauxiliaresDao extends BaseDao {
+public class TasuntoDao extends BaseDao {
 
-    /**
-     * Devuelve la lista de los tipos de documentos identificativos tabla TTIDENTIFICA
-     * @return lista (cadenas) tipos de documento
-     */
-    public List getListTipoDocumentoStr() {
-
-        ResultSet rs = null;
-        List<String> lista = new ArrayList();
-        PreparedStatement ppStatemt = null;
-        String checkStr = "select * "
-                + " from TTIDENTIFICA";
-
-        try {
-            globalConnection = super.openDBConnection();
-            ppStatemt = globalConnection.prepareStatement(checkStr);
-
-            rs = ppStatemt.executeQuery();
-
-            while (rs.next()) {
-                lista.add(rs.getString("descripcion"));
-            }
-            return lista;
-        } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
-            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
-        } finally {
-            try {
-                if (rs != null && !rs.isClosed()) {
-                    rs.close();
-                }
-                if (ppStatemt != null && !ppStatemt.isClosed() ) {
-                    ppStatemt.close();
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            super.closeDBConnection(globalConnection);
-        }
-        return null;
-    }
-    
-    /**
-     * Devuelve el código identificador del tipo de documento correspondiente a la descripción
-     * @param descripcion
-     * @return 
-     */
-    public String getTipoDocumentoByStr(String descripcion) {
+    public int getTasuntoBy(String descripcion) {
 
         ResultSet rs = null;
         PreparedStatement ppStatemt = null;
-        String checkStr = "select * "
-                + " from TTIDENTIFICA"
+        String checkStr = "select ID, descripcion, idtipo "
+                + " from TASUNTO"
                 + " where DESCRIPCION = ? ";
 
         try {
@@ -81,7 +34,7 @@ public class TauxiliaresDao extends BaseDao {
             rs = ppStatemt.executeQuery();
 
             if (rs.next()) {
-                return rs.getString("ID");
+                return rs.getInt("ID");
             }
         } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
             Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
@@ -90,7 +43,43 @@ public class TauxiliaresDao extends BaseDao {
                 if (rs != null && !rs.isClosed()) {
                     rs.close();
                 }
-                if (ppStatemt != null && !ppStatemt.isClosed() ) {
+                if (ppStatemt != null && !ppStatemt.isClosed()) {
+                    ppStatemt.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            super.closeDBConnection(globalConnection);
+        }
+        return -1;
+    }
+    
+    public String getTasuntoBy(int id) {
+
+        ResultSet rs = null;
+        PreparedStatement ppStatemt = null;
+        String checkStr = "select ID, descripcion, idtipo "
+                + " from TASUNTO"
+                + " where id = ? ";
+
+        try {
+            globalConnection = super.openDBConnection();
+            ppStatemt = globalConnection.prepareStatement(checkStr);
+            ppStatemt.setInt(1, id);
+
+            rs = ppStatemt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("DESCRIPCION");
+            }
+        } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
+            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (ppStatemt != null && !ppStatemt.isClosed()) {
                     ppStatemt.close();
                 }
             } catch (SQLException ex) {
@@ -100,6 +89,4 @@ public class TauxiliaresDao extends BaseDao {
         }
         return null;
     }
-    
-    
 }

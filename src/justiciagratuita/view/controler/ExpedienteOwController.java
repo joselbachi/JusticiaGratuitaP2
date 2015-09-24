@@ -138,6 +138,7 @@ public class ExpedienteOwController {
             asuntoField.setText(expediente.getAsunto());
             numExpedienteField.setText(String.valueOf(expediente.getNumExpediente()));
             numTurnoField.setText(String.valueOf(expediente.getNumTurnoComp()));
+            asuntoField.setText(expediente.getAsunto());
             /*            
              nombreLabel.setText(expediente.getNombre());
              lastNameLabel.setText(expediente.getApellidos());

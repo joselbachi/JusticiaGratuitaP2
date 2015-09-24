@@ -29,7 +29,7 @@ public class Expediente extends BaseLogic {
      * @return expediente con los datos completos.
      */
     public ExpedienteDTO recuperaDatosExpedi(ExpedienteDTO exped){
-        
+
         
         return exped;
     }
