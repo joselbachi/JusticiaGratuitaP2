@@ -23,14 +23,14 @@ import javafx.beans.property.StringProperty;
 public class ExpedienteDTO extends BaseDTO {
 
     private final IntegerProperty id;
-    private final IntegerProperty idSolicitante;
+//    private final IntegerProperty idSolicitante;
     private final IntegerProperty idJuzgado;
     private final IntegerProperty idLetrado;
     private final IntegerProperty idProcurador;
     private final IntegerProperty numTurno; // sólo número secuencial.
     private final IntegerProperty numExped; // sólo número secuencial.
     private final IntegerProperty anyo;
-    private final StringProperty asunto;
+//    private final StringProperty asunto;
     private final IntegerProperty idComision;
     private final BooleanProperty violencia;
     private final ObjectProperty<LocalDateTime> fecEntradaCol;
@@ -46,28 +46,31 @@ public class ExpedienteDTO extends BaseDTO {
     /* Auxiliares para presentación */
 /*    private final StringProperty nombreSolic = new SimpleStringProperty();
     private final StringProperty apellidosSolic = new SimpleStringProperty();*/
-    private final StringProperty solicitanteNombre = new SimpleStringProperty();
+// --    private final StringProperty solicitanteNombre = new SimpleStringProperty();
  //   private final StringProperty documentoSolic = new SimpleStringProperty();
-    private final StringProperty juzgado = new SimpleStringProperty();
+    private final ObjectProperty<JuzgadoDTO> juzgado = new SimpleObjectProperty();
     private final StringProperty letradoNombre = new SimpleStringProperty();
     private final StringProperty procuradorNombre = new SimpleStringProperty();
-    private final StringProperty fecEntrada = new SimpleStringProperty();
+    private final ObjectProperty<LocalDate> fecEntrada = new SimpleObjectProperty();
+    
     
     /* actores del expediente */
-    private PersonaDTO solicitante;
+    private final PersonaDTO solicitante;
     private PersonaDTO letrado;
     private PersonaDTO procurador;
+    /* datos expediente */ 
+    private final TasuntoDTO asunto;
     
     /**
      * Default constructor.
      */
     public ExpedienteDTO() {
-        this(-1, -1, -1, -1, null, -1, null, null);
+        this(-1,  -1, -1, null, -1, null, null);
     }
 
-    public ExpedienteDTO(int id, int idsolictante, int numTurno, int anyo, LocalDateTime fecEntradaCol, int idEstado, PersonaDTO solicitante, String asunto) {
+    public ExpedienteDTO(int id,  int numTurno, int anyo, LocalDateTime fecEntradaCol, int idEstado, PersonaDTO solicitante, TasuntoDTO asunto) {
         this.id = new SimpleIntegerProperty(id);
-        this.idSolicitante = new SimpleIntegerProperty(idsolictante);
+        this.solicitante = solicitante;
         this.idJuzgado = new SimpleIntegerProperty();
         this.idLetrado = new SimpleIntegerProperty();
         this.idProcurador = new SimpleIntegerProperty();
@@ -86,8 +89,8 @@ public class ExpedienteDTO extends BaseDTO {
         this.numTurnoComp = new SimpleStringProperty(this.anyo.intValue()+"/"+String.format("%04d",this.numTurno.intValue()));
         this.numExpediente = new SimpleStringProperty(this.anyo.intValue()+"/"+String.format("%04d",this.numExped.intValue()));
 
-        this.setSolicitante(solicitante);
-        this.asunto = new SimpleStringProperty(asunto);
+//        this.setSolicitante(solicitante);
+        this.asunto = asunto;
     }
 
     public int getId() {
@@ -101,7 +104,7 @@ public class ExpedienteDTO extends BaseDTO {
     public IntegerProperty idProperty() {
         return id;
     }
-
+/*
     public int getIdSolicitante() {
         return idSolicitante.intValue();
     }
@@ -113,6 +116,7 @@ public class ExpedienteDTO extends BaseDTO {
     public IntegerProperty idSolicitanteProperty() {
         return idSolicitante;
     }
+    */
 
     public int getIdJuzgado() {
         return idJuzgado.intValue();
@@ -446,14 +450,14 @@ public class ExpedienteDTO extends BaseDTO {
         return this.solicitante;
     }
  /*   Se tiene que asignar en la creación del expediente */
-    private void setSolicitante(PersonaDTO solicitante) {
-        this.solicitante = solicitante;
-        if (solicitante != null && solicitante.getId() >= 0 ) {
+//    private void setSolicitante(PersonaDTO solicitante) {
+//        this.solicitante = solicitante;
+//        if (solicitante != null && solicitante.getId() >= 0 ) {
 /*            this.nombreSolic.set(solicitante.getNombre());
             this.apellidosSolic.set(solicitante.getApellidos());*/
-            this.solicitanteNombre.set(solicitante.apellNombreCompleto());
-        }
-    }
+//            this.solicitanteNombre.set(solicitante.apellNombreCompleto());
+//        }
+//    }
     
     
    /* campos auxiliares */ 
@@ -478,12 +482,13 @@ public class ExpedienteDTO extends BaseDTO {
     }
   */  
     public StringProperty solicitanteNombreProperty() {
-        return solicitanteNombre;
+        return new SimpleStringProperty(solicitante.toString());
     }
+
     public String getSolicitanteNombre() {
-        return solicitanteNombre.get();
+        return solicitante.toString();
     }
-   
+ 
 /*    public StringProperty documentoSolicProperty() {
         return documentoSolic;
     }
@@ -495,12 +500,20 @@ public class ExpedienteDTO extends BaseDTO {
         return null;
     }
 
-    public StringProperty juzgadoProperty() {
+    public ObjectProperty<JuzgadoDTO> juzgadoProperty() {
         return juzgado;
     }
 
     public String getJuzgado() {
-        return juzgado.get();
+        if (juzgado != null && juzgado.get() != null) {
+            return juzgado.get().getDescripcion();
+        } else {
+            return null;
+        }
+    }
+    
+    public void setJuzgado(JuzgadoDTO juzgado) {
+        this.juzgado.set(juzgado);
     }
 
     public StringProperty letradoNombreProperty() {
@@ -519,25 +532,28 @@ public class ExpedienteDTO extends BaseDTO {
         return procuradorNombre.get();
     }
 
-    public StringProperty fecEntradaProperty() {
+    public LocalDate getFecEntrada() {
+        return fecEntrada.get();
+    }
+
+    public void setFecEntrada(LocalDate fecEntrada) {
+        this.fecEntrada.set(fecEntrada);
+    }
+
+    public ObjectProperty<LocalDate> fecEntradaProperty() {
         return fecEntrada;
     }
 
-    public String getFecEntrada() {
-        return fecEntrada.get();
-
-    }
-
     public StringProperty asuntoProperty() {
-        return asunto;
+        return new SimpleStringProperty(asunto.getDescricion());
     }
 
     public String getAsunto() {
-        return asunto.get();
+        return asunto.toString();
     }
     
-    public void setAsunto() {
-        
+    public int getIdAsunto() {
+        return asunto.getId();
     }
 
 

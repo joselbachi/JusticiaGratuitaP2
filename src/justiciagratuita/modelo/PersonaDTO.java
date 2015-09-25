@@ -27,7 +27,7 @@ public class PersonaDTO extends BaseDTO {
     private final StringProperty nombre;
     private final StringProperty pApellido;
     private final StringProperty sApellido;
-    private final StringProperty idTipoIdentificador;
+    //private final StringProperty idTipoIdentificador;
     private final StringProperty identificador;
     private final StringProperty direccion = new SimpleStringProperty();
     private final IntegerProperty codigoPostal;
@@ -37,19 +37,26 @@ public class PersonaDTO extends BaseDTO {
     private final StringProperty movil = new SimpleStringProperty();
     private final ObjectProperty<LocalDate> fecNac;
     
+    /* datos persona */
+    private final ObjectProperty<TdocumentoDTO> tipoIdentificador;
+    
     /**
      * Default constructor.
      */
     public PersonaDTO() {
-        this(-1, null, null, null, null, null);
+        this(-1, null, null, null, new TdocumentoDTO(null), null);
     }
     
-    public PersonaDTO(int id, String nombre, String pApellido, String sapellido, String idTipoIdentificador, String identificador) {
+    public PersonaDTO(int id, String nombre, String pApellido, String sapellido, String idTtipoIdentificador, String identificador) {
+        this(id, nombre, pApellido, sapellido,  new TdocumentoDTO(idTtipoIdentificador), identificador);
+    }
+    
+    public PersonaDTO(int id, String nombre, String pApellido, String sapellido, TdocumentoDTO tipoIdentificador, String identificador) {
         this.id = new SimpleIntegerProperty(id);
         this.nombre = new SimpleStringProperty(nombre);
         this.pApellido = new SimpleStringProperty(pApellido);
         this.sApellido = new SimpleStringProperty(sapellido);
-        this.idTipoIdentificador = new SimpleStringProperty(idTipoIdentificador);
+        this.tipoIdentificador = new SimpleObjectProperty(tipoIdentificador);
         this.identificador = new SimpleStringProperty(identificador);
         // quitar después de las pruebas
         this.codigoPostal = new SimpleIntegerProperty(42002);
@@ -136,17 +143,19 @@ public class PersonaDTO extends BaseDTO {
     
 
     public String getIdTipoIdentificador() {
-        return idTipoIdentificador.get();
+        return tipoIdentificador.get().getId();
     }
 
-    public void setIdTipoIdentificador(String value) {
-        idTipoIdentificador.set(value);
+    
+    public void setTipoIdentificador(TdocumentoDTO value) {
+        tipoIdentificador.set(value);
     }
-
+/*
     public StringProperty idTipoIdentificadorProperty() {
         return idTipoIdentificador;
     }
-    
+   */
+ 
     public String getIdentificador() {
         return identificador.get();
     }
@@ -164,8 +173,8 @@ public class PersonaDTO extends BaseDTO {
      * @return cadena de identificador o nulo si no existen datos.
      */
     public String getDocumento() {
-        if (idTipoIdentificador != null && identificador != null ) {
-            return idTipoIdentificador.get()+ "-" + identificador.get();
+        if (tipoIdentificador != null && identificador != null ) {
+            return tipoIdentificador.get().getId()+ "-" + identificador.get();
         }
         return null;
     }
@@ -258,6 +267,11 @@ public class PersonaDTO extends BaseDTO {
         } else {
             return nombre.get()+", "+pApellido.get()+" "+sApellido.get();
         }
+    }
+    
+    @Override
+    public String toString() {
+        return apellNombreCompleto();
     }
 
 }

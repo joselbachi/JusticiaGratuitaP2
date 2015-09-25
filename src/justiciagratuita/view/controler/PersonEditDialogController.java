@@ -13,6 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
 import justiciagratuita.modelo.PersonaDTO;
+import justiciagratuita.modelo.TdocumentoDTO;
 import org.controlsfx.dialog.Dialogs;
 import util.DateUtil;
 import util.ValidationsUtil;
@@ -137,7 +138,7 @@ public class PersonEditDialogController {
             person.setFecNac(DateUtil.parse(fecNacField.getText()));
 
             person.setsApellido(sApellidoField.getText());
-            person.setIdTipoIdentificador((String) idTipoIdentificadorField.getValue());
+            person.setTipoIdentificador( new TdocumentoDTO((String) idTipoIdentificadorField.getValue()));
             person.setIdentificador(identificadorField.getText());
             person.setProvincia(provinciaField.getText());
             person.setTelefono(telefonoField.getText());

@@ -8,9 +8,12 @@ package justiciagratuita.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import justiciagratuita.exceptions.DatabaseInUseException;
+import justiciagratuita.modelo.TasuntoDTO;
 
 /**
  *
@@ -18,7 +21,7 @@ import justiciagratuita.exceptions.DatabaseInUseException;
  */
 public class TasuntoDao extends BaseDao {
 
-    public int getTasuntoBy(String descripcion) {
+    public TasuntoDTO getTasuntoBy(String descripcion) {
 
         ResultSet rs = null;
         PreparedStatement ppStatemt = null;
@@ -34,7 +37,11 @@ public class TasuntoDao extends BaseDao {
             rs = ppStatemt.executeQuery();
 
             if (rs.next()) {
-                return rs.getInt("ID");
+                TasuntoDTO objeto = new TasuntoDTO();
+                objeto.setId(rs.getInt("ID"));
+                objeto.setDescripcion(rs.getString("descripcion"));
+                objeto.setIdTipo(rs.getString("IDTIPO"));
+                return objeto;
             }
         } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
             Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
@@ -51,16 +58,16 @@ public class TasuntoDao extends BaseDao {
             }
             super.closeDBConnection(globalConnection);
         }
-        return -1;
+        return null;
     }
     
-    public String getTasuntoBy(int id) {
+    public TasuntoDTO getTasuntoBy(int id) {
 
         ResultSet rs = null;
         PreparedStatement ppStatemt = null;
         String checkStr = "select ID, descripcion, idtipo "
                 + " from TASUNTO"
-                + " where id = ? ";
+                + " where ID = ? ";
 
         try {
             globalConnection = super.openDBConnection();
@@ -70,8 +77,54 @@ public class TasuntoDao extends BaseDao {
             rs = ppStatemt.executeQuery();
 
             if (rs.next()) {
-                return rs.getString("DESCRIPCION");
+                TasuntoDTO objeto = new TasuntoDTO();
+                objeto.setId(rs.getInt("ID"));
+                objeto.setDescripcion(rs.getString("descripcion"));
+                objeto.setIdTipo(rs.getString("IDTIPO"));
+                return objeto;
             }
+        } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
+            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (ppStatemt != null && !ppStatemt.isClosed()) {
+                    ppStatemt.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            super.closeDBConnection(globalConnection);
+        }
+        return null;
+    }
+    
+    public List<TasuntoDTO> ListaTasunto() {
+
+        ResultSet rs = null;
+        PreparedStatement ppStatemt = null;
+        String checkStr = "select ID, descripcion, idtipo "
+                + " from TASUNTO"
+                + " where id = ? ";
+        
+        List<TasuntoDTO> lista = new ArrayList();
+
+        try {
+            globalConnection = super.openDBConnection();
+            ppStatemt = globalConnection.prepareStatement(checkStr);
+
+            rs = ppStatemt.executeQuery();
+
+            while (rs.next()) {
+                TasuntoDTO objeto = new TasuntoDTO();
+                objeto.setId(rs.getInt("id"));
+                objeto.setDescripcion(rs.getString("descripcion"));
+                objeto.setIdTipo(rs.getString("idtipo"));
+                lista.add(objeto);
+            }
+            return lista;
         } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
             Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
         } finally {

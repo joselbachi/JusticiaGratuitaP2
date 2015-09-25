@@ -12,6 +12,7 @@ import javafx.scene.control.TableView;
 import justiciagratuita.JusticiaGratuita;
 import justiciagratuita.modelo.ExpedienteDTO;
 import org.controlsfx.dialog.Dialogs;
+import util.DateUtil;
 /**
  *
  * @author joseluis.bachiller
@@ -134,7 +135,7 @@ public class ExpedienteOwController {
             juzgadoField.setText(expediente.getJuzgado());
             letradoNombreField.setText(expediente.getLetradoNombre());
             procuradorNombreField.setText(expediente.getProcuradorNombre());
-            fecEntradaField.setText(expediente.getFecEntrada());
+            fecEntradaField.setText(DateUtil.format(expediente.getFecEntrada()));
             asuntoField.setText(expediente.getAsunto());
             numExpedienteField.setText(String.valueOf(expediente.getNumExpediente()));
             numTurnoField.setText(String.valueOf(expediente.getNumTurnoComp()));

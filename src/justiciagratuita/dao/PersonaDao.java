@@ -36,9 +36,11 @@ public class PersonaDao extends BaseDao {
             ppStatemt.setInt(1, id);
 
             rs = ppStatemt.executeQuery();
+            
+            TdocumentoDao tdocu = new TdocumentoDao();
 
             if (rs.next()) {
-                objeto = new PersonaDTO(rs.getInt("id"), rs.getString("nombre"), rs.getString("papellido"), rs.getString("sapellido"), rs.getString("idtipoidentificador"), rs.getString("identificador"));
+                objeto = new PersonaDTO(rs.getInt("id"), rs.getString("nombre"), rs.getString("papellido"), rs.getString("sapellido"), tdocu.getTdocumentoById(rs.getString("idtipoidentificador")), rs.getString("identificador"));
                 objeto.setDireccion(rs.getString("direccion"));
                 objeto.setCodigoPostal(rs.getInt("codpostal"));
                 objeto.setLocalidad(rs.getString("localidad"));
@@ -92,9 +94,11 @@ public class PersonaDao extends BaseDao {
             ppStatemt.setString(2, documento);
 
             rs = ppStatemt.executeQuery();
+            
+            TdocumentoDao tdocu = new TdocumentoDao();
 
             if (rs.next()) {
-                objeto = new PersonaDTO(rs.getInt("id"), rs.getString("nombre"), rs.getString("papellido"), rs.getString("sapellido"), rs.getString("idtipoidentificador"), rs.getString("identificador"));
+                objeto = new PersonaDTO(rs.getInt("id"), rs.getString("nombre"), rs.getString("papellido"), rs.getString("sapellido"), tdocu.getTdocumentoById(rs.getString("idtipoidentificador")), rs.getString("identificador"));
                 objeto.setDireccion(rs.getString("direccion"));
                 objeto.setCodigoPostal(rs.getInt("codpostal"));
                 objeto.setLocalidad(rs.getString("localidad"));

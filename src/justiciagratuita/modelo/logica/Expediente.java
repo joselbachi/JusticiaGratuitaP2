@@ -28,10 +28,10 @@ public class Expediente extends BaseLogic {
      * (tabla expediente + solicitante) y se recuperan el resto de los datos.
      * @return expediente con los datos completos.
      */
-    public ExpedienteDTO recuperaDatosExpedi(ExpedienteDTO exped){
+ /*   public ExpedienteDTO recuperaDatosExpedi(ExpedienteDTO exped){
 
         
         return exped;
     }
-    
+   */ 
 }
