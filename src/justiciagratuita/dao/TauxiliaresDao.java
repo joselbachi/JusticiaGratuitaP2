@@ -8,6 +8,7 @@ package justiciagratuita.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,15 +29,15 @@ public class TauxiliaresDao extends BaseDao {
 
         ResultSet rs = null;
         List<String> lista = new ArrayList();
-        PreparedStatement ppStatemt = null;
+        Statement statemt = null;
         String checkStr = "select * "
                 + " from TTIDENTIFICA";
 
         try {
             globalConnection = super.openDBConnection();
-            ppStatemt = globalConnection.prepareStatement(checkStr);
+            statemt = globalConnection.createStatement();
 
-            rs = ppStatemt.executeQuery();
+            rs = statemt.executeQuery(checkStr);
 
             while (rs.next()) {
                 lista.add(rs.getString("descripcion"));
@@ -49,8 +50,8 @@ public class TauxiliaresDao extends BaseDao {
                 if (rs != null && !rs.isClosed()) {
                     rs.close();
                 }
-                if (ppStatemt != null && !ppStatemt.isClosed() ) {
-                    ppStatemt.close();
+                if (statemt != null && !statemt.isClosed() ) {
+                    statemt.close();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);

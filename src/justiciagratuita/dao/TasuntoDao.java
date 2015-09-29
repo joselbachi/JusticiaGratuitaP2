@@ -8,6 +8,7 @@ package justiciagratuita.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -104,7 +105,7 @@ public class TasuntoDao extends BaseDao {
     public List<TasuntoDTO> ListaTasunto() {
 
         ResultSet rs = null;
-        PreparedStatement ppStatemt = null;
+        Statement statemt = null;
         String checkStr = "select ID, descripcion, idtipo "
                 + " from TASUNTO"
                 + " where id = ? ";
@@ -113,9 +114,9 @@ public class TasuntoDao extends BaseDao {
 
         try {
             globalConnection = super.openDBConnection();
-            ppStatemt = globalConnection.prepareStatement(checkStr);
+            statemt = globalConnection.createStatement();
 
-            rs = ppStatemt.executeQuery();
+            rs = statemt.executeQuery(checkStr);
 
             while (rs.next()) {
                 TasuntoDTO objeto = new TasuntoDTO();
@@ -132,8 +133,8 @@ public class TasuntoDao extends BaseDao {
                 if (rs != null && !rs.isClosed()) {
                     rs.close();
                 }
-                if (ppStatemt != null && !ppStatemt.isClosed()) {
-                    ppStatemt.close();
+                if (statemt != null && !statemt.isClosed()) {
+                    statemt.close();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);

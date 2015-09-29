@@ -14,7 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import justiciagratuita.exceptions.DatabaseInUseException;
 import justiciagratuita.modelo.ExpedienteDTO;
-import justiciagratuita.modelo.PersonaDTO;
 
 /**
  *
@@ -43,12 +42,15 @@ public class ExpedienteDao extends BaseDao {
             if (rs.next()) {
                 PersonaDao per = new PersonaDao();
                 TasuntoDao asun = new TasuntoDao();
+                JuzgadoDao juz = new JuzgadoDao();
+                LetradoDao let = new LetradoDao();
+                ProcuradorDao pro = new ProcuradorDao();
                 objeto = new ExpedienteDTO(rs.getInt("id"), rs.getInt("numTurno"), 
                         rs.getInt("anyo"), util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecEntradaCol")), 
-                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("id")), asun.getTasuntoBy(rs.getInt("idAsunto")));
-                objeto.setIdJuzgado(rs.getInt("idJuzgado"));
-                objeto.setIdLetrado(rs.getInt("idLetrado"));
-                objeto.setIdProcurador(rs.getInt("idProcurador"));
+                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("IDSOLICITANTE")), asun.getTasuntoBy(rs.getInt("idAsunto")));
+                objeto.setJuzgado(juz.getJuzgadoByStr(rs.getInt("idJuzgado")));
+                objeto.setLetrado(let.getLetradoByID(rs.getInt("idLetrado")));
+                objeto.setProcurador(pro.getProcuradorByID(rs.getInt("idProcurador")));
                 objeto.setIdComision(rs.getInt("idComision"));
                 objeto.setViolencia(rs.getBoolean("violencia"));
                 objeto.setFecEnvioDel(util.DateUtil.convertToEntityAttribute(rs.getDate("fecEnvioDel")));
@@ -103,9 +105,9 @@ public class ExpedienteDao extends BaseDao {
                 TasuntoDao asun = new TasuntoDao();
                 objeto = new ExpedienteDTO(rs.getInt("id"), rs.getInt("numTurno"), 
                         rs.getInt("anyo"), util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecEntradaCol")), 
-                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("id")), asun.getTasuntoBy(rs.getInt("idAsunto")));
+                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("IDSOLICITANTE")), asun.getTasuntoBy(rs.getInt("idAsunto")));
 // Por ahora sólo necesito la lista
-/*                objeto.setIdJuzgado(rs.getInt("idJuzgado"));
+/*                
                 objeto.setIdLetrado(rs.getInt("idLetrado"));
                 objeto.setIdProcurador(rs.getInt("idProcurador"));
                 objeto.setIdComision(rs.getInt("idComision"));
@@ -170,8 +172,7 @@ public class ExpedienteDao extends BaseDao {
                 TasuntoDao asun = new TasuntoDao();
                 objeto = new ExpedienteDTO(rs.getInt("id"), rs.getInt("numTurno"), 
                         rs.getInt("anyo"), util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecEntradaCol")), 
-                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("id")), asun.getTasuntoBy(rs.getInt("idAsunto")));
-                PersonaDTO solic = new PersonaDTO();
+                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("IDSOLICITANTE")), asun.getTasuntoBy(rs.getInt("idAsunto")));
 // Por ahora sólo necesito la lista
 /*                objeto.setIdJuzgado(rs.getInt("idJuzgado"));
                 objeto.setIdLetrado(rs.getInt("idLetrado"));

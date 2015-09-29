@@ -23,22 +23,22 @@ public class PersonaDTO extends BaseDTO {
     public static final String NIE = "NIE";
     public static final String PASAPORTE = "PASAPORTE";
     
-    private final IntegerProperty id;
-    private final StringProperty nombre;
-    private final StringProperty pApellido;
-    private final StringProperty sApellido;
+    protected final IntegerProperty id;
+    protected final StringProperty nombre;
+    protected final StringProperty pApellido;
+    protected final StringProperty sApellido;
     //private final StringProperty idTipoIdentificador;
-    private final StringProperty identificador;
-    private final StringProperty direccion = new SimpleStringProperty();
-    private final IntegerProperty codigoPostal;
-    private final StringProperty localidad = new SimpleStringProperty();
-    private final StringProperty provincia = new SimpleStringProperty();
-    private final StringProperty telefono = new SimpleStringProperty();
-    private final StringProperty movil = new SimpleStringProperty();
-    private final ObjectProperty<LocalDate> fecNac;
+    protected final StringProperty identificador;
+    protected final StringProperty direccion = new SimpleStringProperty();
+    protected final IntegerProperty codigoPostal;
+    protected final StringProperty localidad = new SimpleStringProperty();
+    protected final StringProperty provincia = new SimpleStringProperty();
+    protected final StringProperty telefono = new SimpleStringProperty();
+    protected final StringProperty movil = new SimpleStringProperty();
+    protected final ObjectProperty<LocalDate> fecNac;
     
     /* datos persona */
-    private final ObjectProperty<TdocumentoDTO> tipoIdentificador;
+    protected final ObjectProperty<TdocumentoDTO> tipoIdentificador;
     
     /**
      * Default constructor.
@@ -142,19 +142,22 @@ public class PersonaDTO extends BaseDTO {
     }
     
 
-    public String getIdTipoIdentificador() {
+/*    public String getIdTipoIdentificador() {
         return tipoIdentificador.get().getId();
     }
-
+*/
+    public TdocumentoDTO getTipoIdentificador() {
+        return tipoIdentificador.get();
+    }
     
     public void setTipoIdentificador(TdocumentoDTO value) {
         tipoIdentificador.set(value);
     }
-/*
-    public StringProperty idTipoIdentificadorProperty() {
-        return idTipoIdentificador;
+
+    public ObjectProperty<TdocumentoDTO> TipoIdentificadorProperty() {
+        return tipoIdentificador;
     }
-   */
+   
  
     public String getIdentificador() {
         return identificador.get();

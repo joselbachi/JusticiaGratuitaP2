@@ -104,7 +104,7 @@ public class PersonEditDialogController {
       pApellidoField.setText(person.getpApellido());
       sApellidoField.setText(person.getsApellido());
       //idTipoIdentificadorField.setItems(options);
-      idTipoIdentificadorField.setValue(person.getIdTipoIdentificador());
+      idTipoIdentificadorField.setValue(person.getTipoIdentificador().getId());
       identificadorField.setText(person.getIdentificador());
       direccionField.setText(person.getDireccion());
       codigoPostalField.setText(Integer.toString(person.getCodigoPostal()));

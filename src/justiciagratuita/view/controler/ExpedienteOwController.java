@@ -11,6 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import justiciagratuita.JusticiaGratuita;
 import justiciagratuita.modelo.ExpedienteDTO;
+import justiciagratuita.modelo.logica.Expediente;
 import org.controlsfx.dialog.Dialogs;
 import util.DateUtil;
 /**
@@ -129,17 +130,23 @@ public class ExpedienteOwController {
     private void showExpedienteDetails(ExpedienteDTO expediente) {
         if (expediente != null) {
             // Fill the labels with info from the person object.
-
+            Expediente exped = new Expediente();
+            expediente = exped.recuperaDatosExpedi(expediente);
             solicitanteNombreField.setText(expediente.getSolicitanteNombre());
             documentoSolicField.setText(expediente.getDocumentoSolic());
-            juzgadoField.setText(expediente.getJuzgado());
-            letradoNombreField.setText(expediente.getLetradoNombre());
-            procuradorNombreField.setText(expediente.getProcuradorNombre());
-            fecEntradaField.setText(DateUtil.format(expediente.getFecEntrada()));
+            juzgadoField.setText(expediente.getJuzgadoNombre());
+            if (expediente.getLetrado() != null) {
+                letradoNombreField.setText(expediente.getLetrado().toString());
+            }
+            if (expediente.getProcurador() != null) {
+                procuradorNombreField.setText(expediente.getProcurador().toString());
+            }
+            fecEntradaField.setText(DateUtil.format(expediente.getFecEntradaCol()));
             asuntoField.setText(expediente.getAsunto());
             numExpedienteField.setText(String.valueOf(expediente.getNumExpediente()));
             numTurnoField.setText(String.valueOf(expediente.getNumTurnoComp()));
             asuntoField.setText(expediente.getAsunto());
+            
             /*            
              nombreLabel.setText(expediente.getNombre());
              lastNameLabel.setText(expediente.getApellidos());

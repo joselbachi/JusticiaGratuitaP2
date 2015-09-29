@@ -24,8 +24,8 @@ public class ExpedienteDTO extends BaseDTO {
 
     private final IntegerProperty id;
 //    private final IntegerProperty idSolicitante;
-    private final IntegerProperty idJuzgado;
-    private final IntegerProperty idLetrado;
+//    private final IntegerProperty idJuzgado;
+//    private final IntegerProperty idLetrado;
     private final IntegerProperty idProcurador;
     private final IntegerProperty numTurno; // sólo número secuencial.
     private final IntegerProperty numExped; // sólo número secuencial.
@@ -48,16 +48,17 @@ public class ExpedienteDTO extends BaseDTO {
     private final StringProperty apellidosSolic = new SimpleStringProperty();*/
 // --    private final StringProperty solicitanteNombre = new SimpleStringProperty();
  //   private final StringProperty documentoSolic = new SimpleStringProperty();
-    private final ObjectProperty<JuzgadoDTO> juzgado = new SimpleObjectProperty();
-    private final StringProperty letradoNombre = new SimpleStringProperty();
-    private final StringProperty procuradorNombre = new SimpleStringProperty();
-    private final ObjectProperty<LocalDate> fecEntrada = new SimpleObjectProperty();
+//    private final ObjectProperty<JuzgadoDTO> juzgado = new SimpleObjectProperty();
+//    private final StringProperty letradoNombre = new SimpleStringProperty();
+//    private final StringProperty procuradorNombre = new SimpleStringProperty();
+//    private final ObjectProperty<LocalDate> fecEntrada = new SimpleObjectProperty();
     
     
     /* actores del expediente */
     private final PersonaDTO solicitante;
-    private PersonaDTO letrado;
-    private PersonaDTO procurador;
+    private JuzgadoDTO juzgado;
+    private LetradoDTO letrado;
+    private ProcuradorDTO procurador;
     /* datos expediente */ 
     private final TasuntoDTO asunto;
     
@@ -71,8 +72,8 @@ public class ExpedienteDTO extends BaseDTO {
     public ExpedienteDTO(int id,  int numTurno, int anyo, LocalDateTime fecEntradaCol, int idEstado, PersonaDTO solicitante, TasuntoDTO asunto) {
         this.id = new SimpleIntegerProperty(id);
         this.solicitante = solicitante;
-        this.idJuzgado = new SimpleIntegerProperty();
-        this.idLetrado = new SimpleIntegerProperty();
+//        this.idJuzgado = new SimpleIntegerProperty();
+//        this.idLetrado = new SimpleIntegerProperty();
         this.idProcurador = new SimpleIntegerProperty();
         this.numTurno = new SimpleIntegerProperty(numTurno);
         this.anyo = new SimpleIntegerProperty(anyo);
@@ -118,7 +119,7 @@ public class ExpedienteDTO extends BaseDTO {
     }
     */
 
-    public int getIdJuzgado() {
+/*    public int getIdJuzgado() {
         return idJuzgado.intValue();
     }
 
@@ -129,19 +130,49 @@ public class ExpedienteDTO extends BaseDTO {
     public IntegerProperty idJuzgadoProperty() {
         return idJuzgado;
     }
-
-    public int getIdLetrado() {
-        return idLetrado.intValue();
-    }
-
-    public void setIdLetrado(int idLetrado) {
-        this.idLetrado.set(idLetrado);
+*/
+    public JuzgadoDTO getJuzgado() {
+        return juzgado;
     }
     
-    public IntegerProperty idLetradoProperty() {
-        return idLetrado;
+    public void setJuzgado(JuzgadoDTO juzgado) {
+        this.juzgado = juzgado;
+    }
+    
+    public String getJuzgadoNombre() {
+        if (juzgado != null ) {
+            return juzgado.getDescripcion();
+        } else {
+            return null;
+        }
     }
 
+    public LetradoDTO getLetrado() {
+        return letrado;
+    }
+    
+    public void setLetrado(LetradoDTO letrado){
+        this.letrado = letrado;
+    }
+
+/*    public String getLetradoNombre() {
+        return letrado.toString();
+    }
+*/
+    public ProcuradorDTO getProcurador() {
+        return procurador;
+    }
+    
+    public void setProcurador(ProcuradorDTO procurador){
+        this.procurador = procurador;
+    }
+
+    /*
+    public String getLetradoNombre() {
+        return letrado.toString();
+    }
+    */
+    
     /**
      * Recupera el código de procurador 
      * @return código o null si no es necesario procurador
@@ -500,38 +531,7 @@ public class ExpedienteDTO extends BaseDTO {
         return null;
     }
 
-    public ObjectProperty<JuzgadoDTO> juzgadoProperty() {
-        return juzgado;
-    }
-
-    public String getJuzgado() {
-        if (juzgado != null && juzgado.get() != null) {
-            return juzgado.get().getDescripcion();
-        } else {
-            return null;
-        }
-    }
-    
-    public void setJuzgado(JuzgadoDTO juzgado) {
-        this.juzgado.set(juzgado);
-    }
-
-    public StringProperty letradoNombreProperty() {
-        return letradoNombre;
-    }
-
-    public String getLetradoNombre() {
-        return letradoNombre.get();
-    }
-
-    public StringProperty procuradorNombreProperty() {
-        return procuradorNombre;
-    }
-
-    public String getProcuradorNombre() {
-        return procuradorNombre.get();
-    }
-
+    /*
     public LocalDate getFecEntrada() {
         return fecEntrada.get();
     }
@@ -543,7 +543,7 @@ public class ExpedienteDTO extends BaseDTO {
     public ObjectProperty<LocalDate> fecEntradaProperty() {
         return fecEntrada;
     }
-
+*/
     public StringProperty asuntoProperty() {
         return new SimpleStringProperty(asunto.getDescricion());
     }

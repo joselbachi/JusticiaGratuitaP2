@@ -8,6 +8,7 @@ package justiciagratuita.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -101,20 +102,19 @@ public class JuzgadoDao extends BaseDao {
         return null;
     }
 
-    public List<JuzgadoDTO> ListaJuzgados(int id) {
+    public List<JuzgadoDTO> ListaJuzgados() {
 
         ResultSet rs = null;
-        PreparedStatement ppStatemt = null;
+        Statement statemt = null;
         String checkStr = "select ID, DESCRIPCION, IDTIPO, FECALTA, FECMODIFICA "
                 + " from JUZGADO"
-                + " where ID = ? ";
+                + " order by descripcion";
 
         try {
             globalConnection = super.openDBConnection();
-            ppStatemt = globalConnection.prepareStatement(checkStr);
-            ppStatemt.setInt(1, id);
+            statemt = globalConnection.createStatement();
 
-            rs = ppStatemt.executeQuery();
+            rs = statemt.executeQuery(checkStr);
             
             List<JuzgadoDTO> lista = new ArrayList();
 
@@ -133,8 +133,8 @@ public class JuzgadoDao extends BaseDao {
                 if (rs != null && !rs.isClosed()) {
                     rs.close();
                 }
-                if (ppStatemt != null && !ppStatemt.isClosed()) {
-                    ppStatemt.close();
+                if (statemt != null && !statemt.isClosed()) {
+                    statemt.close();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);

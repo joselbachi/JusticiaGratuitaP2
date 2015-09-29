@@ -21,10 +21,15 @@ public class DateUtil {
 
     /** The date pattern that is used for conversion. Change as you wish. */
     private static final String DATE_PATTERN = "dd/MM/yyyy";
+    private static final String TIMEDATE_PATTERN = "dd/MM/yyyy HH:mm:ss";
 
     /** The date formatter. */
     private static final DateTimeFormatter DATE_FORMATTER = 
             DateTimeFormatter.ofPattern(DATE_PATTERN);
+    
+    /** The date formatter. */
+    private static final DateTimeFormatter TIMEDATE_FORMATTER = 
+            DateTimeFormatter.ofPattern(TIMEDATE_PATTERN);
 
     /**
      * Returns the given date as a well formatted String. The above defined 
@@ -38,6 +43,20 @@ public class DateUtil {
             return null;
         }
         return DATE_FORMATTER.format(date);
+    }
+    
+        /**
+     * Returns the given date as a well formatted String. The above defined 
+     * {@link DateUtil#DATE_PATTERN} is used.
+     * 
+     * @param date the date to be returned as a string
+     * @return formatted string
+     */
+    public static String format(LocalDateTime date) {
+        if (date == null) {
+            return null;
+        }
+        return TIMEDATE_FORMATTER.format(date);
     }
 
     /**
