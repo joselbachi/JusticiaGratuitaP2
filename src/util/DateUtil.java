@@ -58,6 +58,20 @@ public class DateUtil {
         }
         return TIMEDATE_FORMATTER.format(date);
     }
+    
+    /**
+     * Returns the given date as a well formatted String. The above defined 
+     * {@link DateUtil#DATE_PATTERN} is used.
+     * 
+     * @param date the date to be returned as a string
+     * @return formatted string
+     */
+    public static String formatSort(LocalDateTime date) {
+        if (date == null) {
+            return null;
+        }
+        return DATE_FORMATTER.format(date);
+    }
 
     /**
      * Converts a String in the format of the defined {@link DateUtil#DATE_PATTERN} 
@@ -75,6 +89,25 @@ public class DateUtil {
             return null;
         }
     }
+    
+    /**
+     * Converts a String in the format of the defined {@link DateUtil#TIMEDATE_PATTERN} 
+     * to a {@link LocalDateTime} object.
+     * 
+     * Returns null if the String could not be converted.
+     * 
+     * @param dateTimeString the date as String
+     * @return the date object or null if it could not be converted
+     */
+    public static LocalDateTime parseTime(String dateTimeString) {
+        try {
+            return TIMEDATE_FORMATTER.parse(dateTimeString, LocalDateTime::from);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+    
+    
 
     /**
      * Checks the String whether it is a valid date.
@@ -87,12 +120,24 @@ public class DateUtil {
         return DateUtil.parse(dateString) != null;
     }
     
+    public static boolean validYear(String yearString) {
+        return Integer.parseInt(yearString) < 2000;
+    }
+    
     /**
      * Devuelve el timestamp actual (Fecha y hora actual)
      * @return 
      */
     public static LocalDate now() {
         return LocalDate.now();
+    }
+    
+    /**
+     * Devuelve el timestamp actual (Fecha y hora actual)
+     * @return 
+     */
+    public static String nowYear() {
+        return DateTimeFormatter.ofPattern("yyyy").format(LocalDate.now());
     }
     
     /**

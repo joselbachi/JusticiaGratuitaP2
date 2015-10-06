@@ -44,11 +44,11 @@ public class PersonaDTO extends BaseDTO {
      * Default constructor.
      */
     public PersonaDTO() {
-        this(-1, null, null, null, new TdocumentoDTO(null), null);
+        this(-1, null, null, null, new TdocumentoDTO(null, null), null);
     }
     
     public PersonaDTO(int id, String nombre, String pApellido, String sapellido, String idTtipoIdentificador, String identificador) {
-        this(id, nombre, pApellido, sapellido,  new TdocumentoDTO(idTtipoIdentificador), identificador);
+        this(id, nombre, pApellido, sapellido,  new TdocumentoDTO(idTtipoIdentificador, idTtipoIdentificador), identificador);
     }
     
     public PersonaDTO(int id, String nombre, String pApellido, String sapellido, TdocumentoDTO tipoIdentificador, String identificador) {
@@ -158,7 +158,10 @@ public class PersonaDTO extends BaseDTO {
         return tipoIdentificador;
     }
    
- 
+    /**
+     * Devuelve el número del documento identificador
+     * @return número con letras 
+     */
     public String getIdentificador() {
         return identificador.get();
     }

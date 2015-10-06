@@ -38,6 +38,7 @@ import justiciagratuita.view.controler.PersonEditDialogController;
 import justiciagratuita.view.controler.ProfileController;
 import justiciagratuita.view.controler.RootLayoutController;
 import org.controlsfx.dialog.Dialogs;
+import util.DateUtil;
 
 /**
  *
@@ -49,7 +50,7 @@ public class JusticiaGratuita extends Application {
 
     private Stage stage;
     private UsuarioDTO loggedUser;
-    private final double MINIMUM_WINDOW_WIDTH = 390.0;
+    private final double MINIMUM_WINDOW_WIDTH = 850.0;
     private final double MINIMUM_WINDOW_HEIGHT = 500.0;
 
     private BorderPane rootLayout;
@@ -266,8 +267,15 @@ public class JusticiaGratuita extends Application {
         }
     }
     
+    
+    public boolean newExpedienteEditDialog(ExpedienteDTO expedt) {
+        Expediente expe = new Expediente();
+        expedt.setNumTurno(expe.siguienteTurno(Integer.parseInt(DateUtil.nowYear())));
+        return showExpedienteEditDialog(expedt);
+    }
+    
     /**
-     * Opens a dialog to edit details for the specified person. If the user
+     * Opens a dialog to edit details for the specified expediente. If the user
      * clicks OK, the changes are saved into the provided person object and true
      * is returned.
      *

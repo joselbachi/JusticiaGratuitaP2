@@ -9,20 +9,21 @@
 
 <AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="1000.0" stylesheets="@estilos/Expedientes.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="justiciagratuita.view.controler.ExpedienteOwController">
    <children>
-      <SplitPane dividerPositions="0.29797979797979796" layoutX="188.0" layoutY="56.0" prefHeight="600.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <SplitPane dividerPositions="0.29797979797979796" layoutX="188.0" layoutY="56.0" prefHeight="600.0" prefWidth="700.0" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <TableView fx:id="personTable" layoutX="14.0" layoutY="32.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <TableView fx:id="personTable" layoutX="14.0" layoutY="33.0" prefHeight="566.0" prefWidth="294.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
                     <columns>
                       <TableColumn fx:id="lastNameColumn" prefWidth="75.0" text="P. Apellido" />
                       <TableColumn fx:id="firstNameColumn" prefWidth="75.0" text="Nombre" />
-                        <TableColumn fx:id="numExpteColumn" prefWidth="75.0" text="Expte." />
+                        <TableColumn fx:id="numExpteColumn" prefWidth="75.0" text="Turno" />
                     </columns>
                      <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
+                  <Label layoutX="14.0" layoutY="14.0" prefHeight="21.0" prefWidth="266.0" text="Estado exp.:" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" styleClass="background">
@@ -43,14 +44,15 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="Expediente:" />
                         <Label text="Turno:" GridPane.rowIndex="1" />
                         <Label text="Solicitante:" GridPane.rowIndex="2" />
                         <Label text="Documento:" GridPane.rowIndex="3" />
-                        <Label text="Asunto:" GridPane.rowIndex="4" />
-                        <Label text="Juzgado:" GridPane.rowIndex="5" />
+                        <Label text="Juzgado:" GridPane.rowIndex="4" />
+                        <Label text="Asunto:" GridPane.rowIndex="5" />
                         <Label text="Letrado:" GridPane.rowIndex="6" />
                         <Label text="Procurador:" GridPane.rowIndex="7" />
                         <Label text="F. entrada col:" GridPane.rowIndex="8" />
@@ -58,11 +60,13 @@
                         <Label fx:id="numTurnoField" styleClass="label-bright" text="turno" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label fx:id="solicitanteNombreField" styleClass="label-bright" text="solicitante" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label fx:id="documentoSolicField" styleClass="label-bright" text="documento" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <Label fx:id="asuntoField" styleClass="label-bright" text="asunto" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <Label fx:id="juzgadoField" styleClass="label-bright" text="juzgado" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label fx:id="juzgadoField" styleClass="label-bright" text="juzgado" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label fx:id="asuntoField" styleClass="label-bright" text="asunto" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                         <Label fx:id="letradoNombreField" styleClass="label-bright" text="letrado" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                         <Label fx:id="procuradorNombreField" styleClass="label-bright" text="procurador" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                         <Label fx:id="fecEntradaField" styleClass="label-bright" text="fentrada" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <Label text="Estado:" GridPane.rowIndex="9" />
+                        <Label fx:id="estadoField" styleClass="label-bright" text="estado" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                      </children>
                   </GridPane>
                   <HBox layoutX="221.0" layoutY="259.0" spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0">

@@ -16,11 +16,11 @@ public class TdocumentoDTO {
     
     /**
      * Default constructor.
-     * @param id
+     * @param id = descripción. Se pone lo mismo para el documento y la descripción
      */
-    public TdocumentoDTO(String id) {
+    public TdocumentoDTO(String id, String descripcion) {
         this.id = id;
-        this.descripcion = id;
+        this.descripcion = descripcion;
     }
 
     public String getId() {

@@ -8,6 +8,7 @@ package justiciagratuita.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -45,9 +46,10 @@ public class ExpedienteDao extends BaseDao {
                 JuzgadoDao juz = new JuzgadoDao();
                 LetradoDao let = new LetradoDao();
                 ProcuradorDao pro = new ProcuradorDao();
+                EstadoExpDao est = new EstadoExpDao();
                 objeto = new ExpedienteDTO(rs.getInt("id"), rs.getInt("numTurno"), 
                         rs.getInt("anyo"), util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecEntradaCol")), 
-                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("IDSOLICITANTE")), asun.getTasuntoBy(rs.getInt("idAsunto")));
+                        est.getEstadoBy(rs.getInt("idEstado")), per.getPersonaByID(rs.getInt("IDSOLICITANTE")), asun.getTasuntoBy(rs.getInt("idAsunto")));
                 objeto.setJuzgado(juz.getJuzgadoByStr(rs.getInt("idJuzgado")));
                 objeto.setLetrado(let.getLetradoByID(rs.getInt("idLetrado")));
                 objeto.setProcurador(pro.getProcuradorByID(rs.getInt("idProcurador")));
@@ -103,21 +105,11 @@ public class ExpedienteDao extends BaseDao {
             while (rs.next()) {
                 PersonaDao per = new PersonaDao();
                 TasuntoDao asun = new TasuntoDao();
+                EstadoExpDao est = new EstadoExpDao();
                 objeto = new ExpedienteDTO(rs.getInt("id"), rs.getInt("numTurno"), 
                         rs.getInt("anyo"), util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecEntradaCol")), 
-                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("IDSOLICITANTE")), asun.getTasuntoBy(rs.getInt("idAsunto")));
-// Por ahora sólo necesito la lista
-/*                
-                objeto.setIdLetrado(rs.getInt("idLetrado"));
-                objeto.setIdProcurador(rs.getInt("idProcurador"));
-                objeto.setIdComision(rs.getInt("idComision"));
-                objeto.setViolencia(rs.getBoolean("violencia"));
-                objeto.setFecEnvioDel(util.DateUtil.convertToEntityAttribute(rs.getDate("fecEnvioDel")));
-                objeto.setFecEntradaDel(util.DateUtil.convertToEntityAttribute(rs.getDate("fecEntradaDel")));
-                objeto.setFecResolucion(util.DateUtil.convertToEntityAttribute(rs.getDate("fecResolucion")));
-                objeto.setFecImpugancion(util.DateUtil.convertToEntityAttribute(rs.getDate("fecImpugnacion")));
-                objeto.setObservaciones(rs.getString("observaciones"));
-        */
+                        est.getEstadoBy(rs.getInt("idEstado")), per.getPersonaByID(rs.getInt("IDSOLICITANTE")), asun.getTasuntoBy(rs.getInt("idAsunto")));
+                // Por ahora sólo necesito la lista
                 expedienteData.add(objeto);
             }
             return expedienteData;
@@ -143,76 +135,156 @@ public class ExpedienteDao extends BaseDao {
         return null;
     }
     
-    /**
-     * Lista los expedientes que están en un estado con sus datos completos. Incluye:
-     *  solicitante: datos reducidos del Solicitante.
-     * @param idEstado
-     * @return 
-     */
-    public List<ExpedienteDTO> listExpedCompletoByEstado (int idEstado) {
-        List<ExpedienteDTO> expedienteData = new ArrayList();
-        ExpedienteDTO objeto; 
+    public int getSiguienteTurno(int anyo) {
+
         ResultSet rs = null;
         PreparedStatement ppStatemt = null;
-        String checkStr = "select ID, IDSOLICITANTE, IDJUZGADO, IDLETRADO, IDPROCURADOR, NUMTURNO, "
-                + "ANYO, IDCOMISION, VIOLENCIA, FECENTRADACOL, FECENVIODEL, FECENTRADADEL, FECRESOLUCION, "
-                + "FECIMPUGNACION, OBSERVACIONES, IDESTADO, FECALTA, FECMODIFICA, IDASUNTO "
-                + "from EXPEDIENTE "
-                + "where IDESTADO = ? ";
+        String checkStr = "select max(NUMTURNO) + 1 AS NUMTURNO "
+                + " from EXPEDIENTE"
+                + " where ANYO = ? ";
 
         try {
             globalConnection = super.openDBConnection();
             ppStatemt = globalConnection.prepareStatement(checkStr);
-            ppStatemt.setInt(1, idEstado);
+            ppStatemt.setInt(1, anyo);
 
             rs = ppStatemt.executeQuery();
-            
-            while (rs.next()) {
-                PersonaDao per = new PersonaDao();
-                TasuntoDao asun = new TasuntoDao();
-                objeto = new ExpedienteDTO(rs.getInt("id"), rs.getInt("numTurno"), 
-                        rs.getInt("anyo"), util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecEntradaCol")), 
-                        rs.getInt("idEstado"), per.getPersonaByID(rs.getInt("IDSOLICITANTE")), asun.getTasuntoBy(rs.getInt("idAsunto")));
-// Por ahora sólo necesito la lista
-/*                objeto.setIdJuzgado(rs.getInt("idJuzgado"));
-                objeto.setIdLetrado(rs.getInt("idLetrado"));
-                objeto.setIdProcurador(rs.getInt("idProcurador"));
-                objeto.setIdComision(rs.getInt("idComision"));
-                objeto.setViolencia(rs.getBoolean("violencia"));
-                objeto.setFecEnvioDel(util.DateUtil.convertToEntityAttribute(rs.getDate("fecEnvioDel")));
-                objeto.setFecEntradaDel(util.DateUtil.convertToEntityAttribute(rs.getDate("fecEntradaDel")));
-                objeto.setFecResolucion(util.DateUtil.convertToEntityAttribute(rs.getDate("fecResolucion")));
-                objeto.setFecImpugancion(util.DateUtil.convertToEntityAttribute(rs.getDate("fecImpugnacion")));
-                objeto.setObservaciones(rs.getString("observaciones"));
-        */
-                expedienteData.add(objeto);
+
+            if (rs.next()) {
+                return rs.getInt("NUMTURNO");
             }
-            return expedienteData;
-        } catch (DatabaseInUseException dbEx) {
-            Logger.getLogger(ExpedienteDao.class.getName()).log(Level.SEVERE, null, dbEx);
-        } catch (NullPointerException nex) {
-            Logger.getLogger(ExpedienteDao.class.getName()).log(Level.SEVERE, null, nex);
-        } catch (SQLException ex) {
-            Logger.getLogger(ExpedienteDao.class.getName()).log(Level.SEVERE, null, ex);
+            return 1;
+        } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
+            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
         } finally {
             try {
                 if (rs != null && !rs.isClosed()) {
                     rs.close();
                 }
-                if (ppStatemt != null && !ppStatemt.isClosed() ) {
+                if (ppStatemt != null && !ppStatemt.isClosed()) {
                     ppStatemt.close();
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(ExpedienteDao.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
             }
             super.closeDBConnection(globalConnection);
         }
-        return null;
+        return -1;
     }
     
-    private ExpedienteDTO recuperaDatos(ExpedienteDTO exped) {
-        
-        
-        return exped;
+    private int getSiguienteId() {
+
+        ResultSet rs = null;
+        Statement statemt = null;
+        String checkStr = "select max(ID) + 1 AS ID "
+                + " from EXPEDIENTE";
+
+        try {
+            globalConnection = super.openDBConnection();
+            statemt = globalConnection.createStatement();
+
+            rs = statemt.executeQuery(checkStr);
+
+            if (rs.next()) {
+                return rs.getInt("ID");
+            }
+            return 1;
+        } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
+            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
+        } finally {
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (statemt != null && !statemt.isClosed()) {
+                    statemt.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            super.closeDBConnection(globalConnection);
+        }
+        return -1;
+    }
+    
+   
+    // guardaExpediente
+    
+    /**
+     * Guarda los datos de un expediente nuevo
+     * @param expediente que va a a guardarse
+     * @return código ID único identificador del expediente
+     */
+    public int guardaNewExpediente(ExpedienteDTO expediente) {
+        Statement statemt = null;
+        int idExped = getSiguienteId();
+        String insrtStr = "Insert into Expediente (ID, IDSOLICITANTE, ";
+        if (expediente.getJuzgado() != null && expediente.getJuzgado().getId() > 0) {
+            insrtStr = insrtStr + "   IDJUZGADO, ";
+        }
+        if (expediente.getLetrado() != null && expediente.getLetrado().getId() > 0) {
+            insrtStr = insrtStr + "   IDLETRADO, ";
+        }
+        if (expediente.getProcurador() != null && expediente.getProcurador().getId() > 0) {
+            insrtStr = insrtStr + "   IDPROCURADOR, ";
+        }
+        insrtStr = insrtStr
+                + "   NUMTURNO, "
+                + "   ANYO, "
+                + "   IDASUNTO, "
+                + "   FECENTRADACOL, ";
+        if (expediente.getFecEntradaDel() != null) {
+            insrtStr = insrtStr + "   FECENTRADADEL, ";
+        }
+        insrtStr = insrtStr
+                + "   IDESTADO, "
+                + "   FECMODIFICA) "
+                + " values ("
+                + idExped + ", "
+                + expediente.getSolicitante().getId() + ", ";
+        if (expediente.getJuzgado() != null && expediente.getJuzgado().getId() > 0) {
+            insrtStr = insrtStr + expediente.getJuzgado().getId() + ", ";
+        }
+        if (expediente.getLetrado() != null && expediente.getLetrado().getId() > 0) {
+            insrtStr = insrtStr + expediente.getLetrado().getId() + ", ";
+        }
+        if (expediente.getProcurador() != null && expediente.getProcurador().getId() > 0) {
+            insrtStr = insrtStr + expediente.getProcurador().getId() + ", ";
+        }
+        insrtStr = insrtStr
+                + expediente.getNumTurno() + ", "
+                + expediente.getAnyo() + ", "
+                + expediente.asuntoProperty().getValue().getId() + ", "
+                + " '" + util.DateUtil.convertToDatabaseColumn(expediente.getFecEntradaCol()) + "', ";
+        if (expediente.getFecEntradaDel() != null) {
+            insrtStr = insrtStr + " '" + util.DateUtil.convertToDatabaseColumn(expediente.getFecEntradaDel()) + "', ";
+        }
+        insrtStr = insrtStr
+                + expediente.getEstado().getId() + ", "
+                + "   CURRENT_TIMESTAMP()) ";
+
+        try {
+            globalConnection = super.openDBConnection();
+            statemt = globalConnection.createStatement();
+
+            if (statemt.executeUpdate(insrtStr) == 1) {
+                expediente.setId(idExped);
+                return idExped;
+            } else {
+                return -1;
+            }
+        } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
+            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
+        } finally {
+            try {
+                if (statemt != null && !statemt.isClosed()) {
+                    statemt.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            super.closeDBConnection(globalConnection);
+        }
+        return -1;
     }
 }

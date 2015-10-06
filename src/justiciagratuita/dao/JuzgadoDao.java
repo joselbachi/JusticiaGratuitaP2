@@ -102,7 +102,7 @@ public class JuzgadoDao extends BaseDao {
         return null;
     }
 
-    public List<JuzgadoDTO> ListaJuzgados() {
+    public List<JuzgadoDTO> listaJuzgados() {
 
         ResultSet rs = null;
         Statement statemt = null;

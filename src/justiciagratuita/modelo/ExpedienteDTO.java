@@ -21,12 +21,14 @@ import javafx.beans.property.StringProperty;
  * @author joseluis.bachiller
  */
 public class ExpedienteDTO extends BaseDTO {
+    
+    private final String FORMT_NUMEXPED = "%04d";
 
     private final IntegerProperty id;
 //    private final IntegerProperty idSolicitante;
 //    private final IntegerProperty idJuzgado;
 //    private final IntegerProperty idLetrado;
-    private final IntegerProperty idProcurador;
+//    private final IntegerProperty idProcurador;
     private final IntegerProperty numTurno; // sólo número secuencial.
     private final IntegerProperty numExped; // sólo número secuencial.
     private final IntegerProperty anyo;
@@ -39,9 +41,10 @@ public class ExpedienteDTO extends BaseDTO {
     private final ObjectProperty<LocalDate> fecResolucion;
     private final ObjectProperty<LocalDate> fecImpugnacion;
     private final StringProperty observaciones;
-    private final IntegerProperty idEstado;
-    private final StringProperty numExpediente; // anyo/nunExped
+//    private final IntegerProperty idEstado;
+//    private final StringProperty numExpediente; // anyo/nunExped
     private final StringProperty numTurnoComp; // anyo/nunTurno
+    private final ObjectProperty<EstadoExpDTO> estado;
     
     /* Auxiliares para presentación */
 /*    private final StringProperty nombreSolic = new SimpleStringProperty();
@@ -55,26 +58,26 @@ public class ExpedienteDTO extends BaseDTO {
     
     
     /* actores del expediente */
-    private final PersonaDTO solicitante;
+    private final ObjectProperty<PersonaDTO> solicitante;
     private JuzgadoDTO juzgado;
     private LetradoDTO letrado;
     private ProcuradorDTO procurador;
     /* datos expediente */ 
-    private final TasuntoDTO asunto;
+    private final ObjectProperty<TasuntoDTO> asunto;
     
     /**
      * Default constructor.
      */
     public ExpedienteDTO() {
-        this(-1,  -1, -1, null, -1, null, null);
+        this(-1,  -1, -1, null, null, null, null);
     }
 
-    public ExpedienteDTO(int id,  int numTurno, int anyo, LocalDateTime fecEntradaCol, int idEstado, PersonaDTO solicitante, TasuntoDTO asunto) {
+    public ExpedienteDTO(int id,  int numTurno, int anyo, LocalDateTime fecEntradaCol, EstadoExpDTO estado, PersonaDTO solicitante, TasuntoDTO asunto) {
         this.id = new SimpleIntegerProperty(id);
-        this.solicitante = solicitante;
+        this.solicitante = new SimpleObjectProperty<PersonaDTO>(solicitante);
 //        this.idJuzgado = new SimpleIntegerProperty();
 //        this.idLetrado = new SimpleIntegerProperty();
-        this.idProcurador = new SimpleIntegerProperty();
+//        this.idProcurador = new SimpleIntegerProperty();
         this.numTurno = new SimpleIntegerProperty(numTurno);
         this.anyo = new SimpleIntegerProperty(anyo);
         this.idComision = new SimpleIntegerProperty();
@@ -85,15 +88,19 @@ public class ExpedienteDTO extends BaseDTO {
         this.fecResolucion = new SimpleObjectProperty<LocalDate>();
         this.fecImpugnacion = new SimpleObjectProperty<LocalDate>();
         this.observaciones = new  SimpleStringProperty();
-        this.idEstado = new SimpleIntegerProperty(idEstado);
+        this.estado = new SimpleObjectProperty<EstadoExpDTO>(estado);
         this.numExped = new SimpleIntegerProperty();
-        this.numTurnoComp = new SimpleStringProperty(this.anyo.intValue()+"/"+String.format("%04d",this.numTurno.intValue()));
-        this.numExpediente = new SimpleStringProperty(this.anyo.intValue()+"/"+String.format("%04d",this.numExped.intValue()));
+        this.numTurnoComp = new SimpleStringProperty(this.anyo.intValue()+"/"+String.format(FORMT_NUMEXPED,this.numTurno.intValue()));
+//        this.numExpediente = new SimpleStringProperty(this.anyo.intValue()+"/"+String.format(FORMT_NUMEXPED,this.numExped.intValue()));
 
 //        this.setSolicitante(solicitante);
-        this.asunto = asunto;
+        this.asunto = new SimpleObjectProperty<TasuntoDTO>(asunto);
     }
 
+    /**
+     * Devuelve el número interno de expediente (secuencial según se va creado)
+     * @return número de expediente o -1 en caso de que no exista expediente
+     */
     public int getId() {
         return id.intValue();
     }
@@ -177,6 +184,7 @@ public class ExpedienteDTO extends BaseDTO {
      * Recupera el código de procurador 
      * @return código o null si no es necesario procurador
      */
+/*
     public int getIdProcurador() {
         return idProcurador.intValue();
     }
@@ -188,7 +196,7 @@ public class ExpedienteDTO extends BaseDTO {
     public IntegerProperty idProcuradorProperty() {
         return idProcurador;
     }
-
+*/
     /**
      * Junto con el año constituye el número de turno completo
      * @return número de turno
@@ -425,24 +433,16 @@ public class ExpedienteDTO extends BaseDTO {
         this.observaciones.set(observaciones);
     }
 
-    public IntegerProperty idEstadoProperty() {
-        return idEstado;
+    public ObjectProperty<EstadoExpDTO> estadoProperty() {
+        return estado;
     }
-
-    /**
-     * Código del estado en el que se encuentra el expediente
-     * @return 
-     */
-    public IntegerProperty getIdEstado() {
-        return idEstado;
+    
+    public EstadoExpDTO getEstado() {
+        return estado.get();
     }
-
-    /**
-     * Código del estado en el que se encuentra el expediente
-     * @param idEstado 
-     */
-    public void setIdEstado(int idEstado) {
-        this.idEstado.set(idEstado);
+    
+    public void setEstado (EstadoExpDTO estado) {
+        this.estado.set(estado);
     }
     
     /**
@@ -450,7 +450,7 @@ public class ExpedienteDTO extends BaseDTO {
      * @return año+\+número de expediente
      */
     public StringProperty numExpedienteProperty() {
-        return numExpediente;
+        return new SimpleStringProperty(getNumExpediente());
     }
     
     /**
@@ -458,7 +458,11 @@ public class ExpedienteDTO extends BaseDTO {
      * @return año+\+número de expediente
      */
     public String getNumExpediente() {
-        return this.anyo.intValue()+"\\"+String.format("%04d",this.numExped.intValue());
+        if (this.numExped.intValue() > 1) {
+            return this.anyo.intValue()+"\\"+String.format(FORMT_NUMEXPED,this.numExped.intValue());
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -474,11 +478,15 @@ public class ExpedienteDTO extends BaseDTO {
      * @return año+\+número de turno
      */
     public String getNumTurnoComp() {
-        return this.anyo.intValue()+"\\"+String.format("%04d", this.numTurno.intValue());
+        return this.anyo.intValue()+"\\"+String.format(FORMT_NUMEXPED, this.numTurno.intValue());
     }
     
     public PersonaDTO getSolicitante() {
-        return this.solicitante;
+        return this.solicitante.get();
+    }
+    
+    public void setSolicitante(PersonaDTO solicitante) {
+        this.solicitante.set(solicitante);
     }
  /*   Se tiene que asignar en la creación del expediente */
 //    private void setSolicitante(PersonaDTO solicitante) {
@@ -513,11 +521,11 @@ public class ExpedienteDTO extends BaseDTO {
     }
   */  
     public StringProperty solicitanteNombreProperty() {
-        return new SimpleStringProperty(solicitante.toString());
+        return new SimpleStringProperty(solicitante.get().toString());
     }
 
     public String getSolicitanteNombre() {
-        return solicitante.toString();
+        return solicitante.get().toString();
     }
  
 /*    public StringProperty documentoSolicProperty() {
@@ -525,8 +533,8 @@ public class ExpedienteDTO extends BaseDTO {
     }
 */
     public String getDocumentoSolic() {
-        if (solicitante != null) {
-            return solicitante.getDocumento();
+        if (solicitante != null && solicitante.get() != null) {
+            return solicitante.get().getDocumento();
         }
         return null;
     }
@@ -544,17 +552,21 @@ public class ExpedienteDTO extends BaseDTO {
         return fecEntrada;
     }
 */
-    public StringProperty asuntoProperty() {
-        return new SimpleStringProperty(asunto.getDescricion());
+    public void setAsunto(TasuntoDTO asunto) {
+        this.asunto.set(asunto);
+    }
+            
+    public ObjectProperty<TasuntoDTO> asuntoProperty() {
+        return asunto;
     }
 
-    public String getAsunto() {
-        return asunto.toString();
+    public TasuntoDTO getAsunto() {
+        return asunto.get();
     }
     
-    public int getIdAsunto() {
+/*    public int getIdAsunto() {
         return asunto.getId();
     }
-
+*/
 
 }

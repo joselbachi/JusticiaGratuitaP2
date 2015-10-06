@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ComboBox;
 import javafx.stage.Stage;
+import justiciagratuita.dao.TdocumentoDao;
 import justiciagratuita.modelo.PersonaDTO;
 import justiciagratuita.modelo.TdocumentoDTO;
 import org.controlsfx.dialog.Dialogs;
@@ -54,11 +55,7 @@ public class PersonEditDialogController {
     private PersonaDTO person;
     private boolean okClicked = false;
     
-    ObservableList<String> options = FXCollections.observableArrayList(
-        PersonaDTO.NIF,
-        PersonaDTO.NIE,
-        PersonaDTO.PASAPORTE
-    );
+    ObservableList<TdocumentoDTO> listaTiposDocumento;
 
     /**
      * Initializes the controller class. This method is automatically called
@@ -66,17 +63,18 @@ public class PersonEditDialogController {
      */
     @FXML
     private void initialize() {
-        idTipoIdentificadorField.setItems(options);
+        recuperaListas();
+        idTipoIdentificadorField.setItems(listaTiposDocumento);
         idTipoIdentificadorField.setPromptText("Tipo doc.");
         // control
         identificadorField.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             if (!newValue) {
                 postDocumento();
-                if (!ValidationsUtil.isCadenaVacia(ValidationsUtil.validaDocumento(identificadorField.getText(), (String) idTipoIdentificadorField.getValue()))) {
+                if (!ValidationsUtil.isCadenaVacia(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) idTipoIdentificadorField.getValue()))) {
                     Dialogs.create()
                         .title("Error en el identificador")
                         .masthead("Hay errores en algunos campos")
-                        .message(ValidationsUtil.validaDocumento(identificadorField.getText(), (String) idTipoIdentificadorField.getValue())+
+                        .message(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) idTipoIdentificadorField.getValue())+
                                 "\nPor favor introduzca un "+ (String )idTipoIdentificadorField.getValue() + " válido")
                         .showError();
                 }
@@ -113,7 +111,7 @@ public class PersonEditDialogController {
       telefonoField.setText(person.getTelefono());
       movilField.setText(person.getMovil());
       fecNacField.setText(DateUtil.format(person.getFecNac()));
-      fecNacField.setPromptText("dd-mm-yyyy");
+      fecNacField.setPromptText("dd/mm/aaaa");
     }
 
     /**
@@ -138,7 +136,7 @@ public class PersonEditDialogController {
             person.setFecNac(DateUtil.parse(fecNacField.getText()));
 
             person.setsApellido(sApellidoField.getText());
-            person.setTipoIdentificador( new TdocumentoDTO((String) idTipoIdentificadorField.getValue()));
+            person.setTipoIdentificador( new TdocumentoDTO((String) idTipoIdentificadorField.getValue(), (String) idTipoIdentificadorField.getValue()));
             person.setIdentificador(identificadorField.getText());
             person.setProvincia(provinciaField.getText());
             person.setTelefono(telefonoField.getText());
@@ -169,8 +167,8 @@ public class PersonEditDialogController {
         if (ValidationsUtil.isCadenaVacia(identificadorField.getText())) {
             errorMessage += "El documento identificador está vacío!\n"; 
         } else {
-            if (!ValidationsUtil.isCadenaVacia(ValidationsUtil.validaDocumento(identificadorField.getText(), (String) idTipoIdentificadorField.getValue()))) {
-                errorMessage += ValidationsUtil.validaDocumento(identificadorField.getText(), (String) idTipoIdentificadorField.getValue())+"!\n"; 
+            if (!ValidationsUtil.isCadenaVacia(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) idTipoIdentificadorField.getValue()))) {
+                errorMessage += ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) idTipoIdentificadorField.getValue())+"!\n"; 
             }
         }
         
@@ -234,5 +232,10 @@ public class PersonEditDialogController {
     private void postDocumento() {
         ValidationsUtil valida = new ValidationsUtil();
         identificadorField.setText(valida.preparaDocumento(identificadorField.getText()));
+    }
+    
+    private void recuperaListas() {
+        TdocumentoDao tDoc = new TdocumentoDao();
+        listaTiposDocumento = FXCollections.observableArrayList(tDoc.listaTiposDocumento());
     }
 }

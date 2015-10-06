@@ -107,6 +107,8 @@
     -fx-font-family: "Arial";
 }
 
+
+
 //.button {
 //    -fx-padding: 5 22 5 22;   
 //    -fx-border-color: #e2e2e2;
@@ -148,11 +150,14 @@
 }
 
 .button:focused {
-    -fx-border-color: white, white;
-    -fx-border-width: 1, 1;
-    -fx-border-style: solid, segments(1, 1);
-    -fx-border-radius: 0, 0;
-    -fx-border-insets: 1 1 1 1, 0;
+    -fx-background-color:
+        rgba(255, 255, 255, 0.08),
+        rgba(0, 0, 0, 0.8),
+        #090a0c,
+        linear-gradient(#4a5661 0%, #1f2429 20%, #1f242a 100%),
+        linear-gradient(#3f4950, #23282e),
+        radial-gradient(center 50% 0%, radius 100%, rgba(135,142,148,0.9),
+        rgba(255,255,255,0));
 }
 
 .button:disabled, .button:default:disabled {

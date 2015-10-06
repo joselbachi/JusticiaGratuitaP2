@@ -14,20 +14,20 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import justiciagratuita.exceptions.DatabaseInUseException;
-import justiciagratuita.modelo.TasuntoDTO;
+import justiciagratuita.modelo.EstadoExpDTO;
 
 /**
  *
  * @author joseluis.bachiller
  */
-public class TasuntoDao extends BaseDao {
-
-    public TasuntoDTO getTasuntoBy(String descripcion) {
+public class EstadoExpDao extends BaseDao {
+    
+        public EstadoExpDTO getEstadoBy(String descripcion) {
 
         ResultSet rs = null;
         PreparedStatement ppStatemt = null;
-        String checkStr = "select ID, descripcion, idtipo "
-                + " from TASUNTO"
+        String checkStr = "select ID, descripcion, descrcorta "
+                + " from ESTADOEXP"
                 + " where DESCRIPCION = ? ";
 
         try {
@@ -38,10 +38,7 @@ public class TasuntoDao extends BaseDao {
             rs = ppStatemt.executeQuery();
 
             if (rs.next()) {
-                TasuntoDTO objeto = new TasuntoDTO();
-                objeto.setId(rs.getInt("ID"));
-                objeto.setDescripcion(rs.getString("descripcion"));
-                objeto.setIdTipo(rs.getString("IDTIPO"));
+                EstadoExpDTO objeto = new EstadoExpDTO(rs.getInt("ID"), rs.getString("descripcion"), rs.getString("descrcorta"));
                 return objeto;
             }
         } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
@@ -62,12 +59,12 @@ public class TasuntoDao extends BaseDao {
         return null;
     }
     
-    public TasuntoDTO getTasuntoBy(int id) {
+    public EstadoExpDTO getEstadoBy(int id) {
 
         ResultSet rs = null;
         PreparedStatement ppStatemt = null;
-        String checkStr = "select ID, descripcion, idtipo "
-                + " from TASUNTO"
+        String checkStr = "select ID, descripcion, descrcorta "
+                + " from ESTADOEXP"
                 + " where ID = ? ";
 
         try {
@@ -78,10 +75,7 @@ public class TasuntoDao extends BaseDao {
             rs = ppStatemt.executeQuery();
 
             if (rs.next()) {
-                TasuntoDTO objeto = new TasuntoDTO();
-                objeto.setId(rs.getInt("ID"));
-                objeto.setDescripcion(rs.getString("descripcion"));
-                objeto.setIdTipo(rs.getString("IDTIPO"));
+                EstadoExpDTO objeto = new EstadoExpDTO(rs.getInt("ID"), rs.getString("descripcion"), rs.getString("descrcorta"));
                 return objeto;
             }
         } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
@@ -102,15 +96,16 @@ public class TasuntoDao extends BaseDao {
         return null;
     }
     
-    public List<TasuntoDTO> listaTasuntos() {
+    public List<EstadoExpDTO> ListaEstado() {
 
         ResultSet rs = null;
         Statement statemt = null;
-        String checkStr = "select ID, descripcion, idtipo "
-                + " from TASUNTO"
-                + " order by descripcion ";
+        String checkStr = "select ID, descripcion, descrcorta "
+                + " from ESTADOEXP"
+                + " where id = ? "
+                + " and fecbaja not null";
         
-        List<TasuntoDTO> lista = new ArrayList();
+        List<EstadoExpDTO> lista = new ArrayList();
 
         try {
             globalConnection = super.openDBConnection();
@@ -119,10 +114,8 @@ public class TasuntoDao extends BaseDao {
             rs = statemt.executeQuery(checkStr);
 
             while (rs.next()) {
-                TasuntoDTO objeto = new TasuntoDTO();
-                objeto.setId(rs.getInt("id"));
-                objeto.setDescripcion(rs.getString("descripcion"));
-                objeto.setIdTipo(rs.getString("idtipo"));
+                EstadoExpDTO objeto = new EstadoExpDTO(rs.getInt("ID"), rs.getString("descripcion"), rs.getString("descrcorta"));
+                objeto.setFecBaja(util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecbaja")));
                 lista.add(objeto);
             }
             return lista;

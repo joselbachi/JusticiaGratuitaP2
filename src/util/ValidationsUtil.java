@@ -7,6 +7,7 @@ package util;
 
 import com.aeat.valida.Validador;
 import justiciagratuita.modelo.PersonaDTO;
+import justiciagratuita.modelo.TdocumentoDTO;
 
 /**
  *
@@ -29,19 +30,22 @@ public class ValidationsUtil {
      * Valida si el documento es un nif/nie válido. 
      * Si es un tipo PASAPORTE no se valida nada.
      * @param nif número de nif/nie con letra
-     * @param idTipoDoc tipo de documento
+     * @param tipoDoc tipo de documento
      * @return 
      *     Una cadena nula si es correcto.
      *     Una cadena con el mensaje de error si es incorrecto.
      */
-    public static String validaDocumento(String nif, String idTipoDoc) {
-        if (nif != null && idTipoDoc != null) {
-            if (idTipoDoc.equalsIgnoreCase(PersonaDTO.PASAPORTE)) {
+    public static String validaDocumento(String nif, TdocumentoDTO tipoDoc) {
+        if (tipoDoc == null) {
+            return "Introduzca un Tipo de Documento válido"; 
+        }
+        if (nif != null && tipoDoc !=null && tipoDoc.getId() != null) {
+            if (tipoDoc.getId().equalsIgnoreCase(PersonaDTO.PASAPORTE)) {
                 return null;
             }
             if (isNie(nif)) {
                 // Posible NIE
-                if (idTipoDoc.equalsIgnoreCase(PersonaDTO.NIE)) {
+                if (tipoDoc.getId().equalsIgnoreCase(PersonaDTO.NIE)) {
                     if (validaNifNieCif(nif)) {
                         return null;
                     } else {
@@ -51,7 +55,7 @@ public class ValidationsUtil {
                     return "El tipo de documento no coincide con el número de documento. Debe ser NIE.";
                 }
             } else {
-                if (idTipoDoc.equalsIgnoreCase(PersonaDTO.NIF)) {
+                if (tipoDoc.getId().equalsIgnoreCase(PersonaDTO.NIF)) {
                     if (validaNifNieCif(nif)) {
                         return null;
                     } else {
@@ -341,23 +345,23 @@ public class ValidationsUtil {
     public static void main (String[] args) {
         ValidationsUtil valid = new ValidationsUtil();
         System.out.print ("Nif válido: ");
-        System.out.println (valid.validaDocumento("16801610H", PersonaDTO.NIF));
+        System.out.println (valid.validaDocumento("16801610H", new TdocumentoDTO(PersonaDTO.NIF,null)));
         System.out.print ("Nif inválido: ");
-        System.out.println (valid.validaDocumento("16801610", PersonaDTO.NIF));
+        System.out.println (valid.validaDocumento("16801610", new TdocumentoDTO(PersonaDTO.NIF,null)));
         System.out.print ("Nif inválido: ");
-        System.out.println (valid.validaDocumento("6801610H", PersonaDTO.NIF));
+        System.out.println (valid.validaDocumento("6801610H", new TdocumentoDTO(PersonaDTO.NIF,null)));
         System.out.print ("Pasaporte valido: ");
-        System.out.println (valid.validaDocumento("16801610H", PersonaDTO.PASAPORTE));
+        System.out.println (valid.validaDocumento("16801610H", new TdocumentoDTO(PersonaDTO.PASAPORTE,null)));
         System.out.print ("Nie válido: ");
-        System.out.println (valid.validaDocumento("Y6801610H", PersonaDTO.NIE));
+        System.out.println (valid.validaDocumento("Y6801610H", new TdocumentoDTO(PersonaDTO.NIE,null)));
         System.out.print ("Nie inválido: ");
-        System.out.println (valid.validaDocumento("Y801610H", PersonaDTO.NIE));
+        System.out.println (valid.validaDocumento("Y801610H", new TdocumentoDTO(PersonaDTO.NIE,null)));
         System.out.print ("Nie inválido: ");
-        System.out.println (valid.validaDocumento("16801610H", PersonaDTO.NIE));
+        System.out.println (valid.validaDocumento("16801610H", new TdocumentoDTO(PersonaDTO.NIE,null)));
         System.out.print ("Nie inválido: ");
-        System.out.println (valid.validaDocumento("T01610H", PersonaDTO.NIE));
+        System.out.println (valid.validaDocumento("T01610H", new TdocumentoDTO(PersonaDTO.NIE,null)));
         System.out.print ("Nie inválido: ");
-        System.out.println (valid.validaDocumento("X01610H", PersonaDTO.NIE));
+        System.out.println (valid.validaDocumento("X01610H", new TdocumentoDTO(PersonaDTO.NIE,null)));
         System.out.println("Prepara documento");
         System.out.println(valid.preparaDocumento("16801610H"));
         System.out.println(valid.preparaDocumento("168 01.6-1_0H"));

@@ -46,20 +46,9 @@ public class ExpedienteOwController {
     private Label numExpedienteField;
     @FXML
     private Label numTurnoField;
+    @FXML
+    private Label estadoField;
     
- /*   @FXML
-    private Label nombreLabel;
-    @FXML
-    private Label lastNameLabel;
-    @FXML
-    private Label streetLabel;
-    @FXML
-    private Label postalCodeLabel;
-    @FXML
-    private Label cityLabel;
-    @FXML
-    private Label birthdayLabel;
-*/
     // Reference to the main application.
     private JusticiaGratuita mainApp;
 
@@ -137,34 +126,24 @@ public class ExpedienteOwController {
             juzgadoField.setText(expediente.getJuzgadoNombre());
             if (expediente.getLetrado() != null) {
                 letradoNombreField.setText(expediente.getLetrado().toString());
+            } else {
+                letradoNombreField.setText("");
             }
             if (expediente.getProcurador() != null) {
                 procuradorNombreField.setText(expediente.getProcurador().toString());
+            } else {
+                procuradorNombreField.setText("");
             }
             fecEntradaField.setText(DateUtil.format(expediente.getFecEntradaCol()));
-            asuntoField.setText(expediente.getAsunto());
             numExpedienteField.setText(String.valueOf(expediente.getNumExpediente()));
             numTurnoField.setText(String.valueOf(expediente.getNumTurnoComp()));
-            asuntoField.setText(expediente.getAsunto());
+            asuntoField.setText(expediente.getAsunto().toString());
+            estadoField.setText(expediente.getEstado().getDescripcion());
+           
             
-            /*            
-             nombreLabel.setText(expediente.getNombre());
-             lastNameLabel.setText(expediente.getApellidos());
-             streetLabel.setText(expediente.getDireccion());
-             postalCodeLabel.setText(Integer.toString(expediente.getCodigoPostal()));
-             cityLabel.setText(expediente.getProvincia());
-             birthdayLabel.setText(DateUtil.format(expediente.getFecNac()));
-             */
         } else {
-            // Person is null, remove all the text.
-/*
-             nombreLabel.setText("");
-             lastNameLabel.setText("");
-             streetLabel.setText("");
-             postalCodeLabel.setText("");
-             cityLabel.setText("");
-             birthdayLabel.setText("");
-             */
+            // Expediente is null, remove all the text.
+
             solicitanteNombreField.setText("");
             documentoSolicField.setText("");
             juzgadoField.setText("");
@@ -174,6 +153,7 @@ public class ExpedienteOwController {
             asuntoField.setText("");
             numExpedienteField.setText("");
             numTurnoField.setText("");
+            estadoField.setText("");
         }
     }
     
@@ -207,10 +187,10 @@ public class ExpedienteOwController {
      */
     @FXML
     private void handleNewExpte() {
-        ExpedienteDTO tempPerson = new ExpedienteDTO();
-        boolean okClicked = mainApp.showExpedienteEditDialog(tempPerson);
+        ExpedienteDTO newExped = new ExpedienteDTO();
+        boolean okClicked = mainApp.newExpedienteEditDialog(newExped);
         if (okClicked) {
-            mainApp.getPersonData().add(tempPerson);
+            mainApp.getPersonData().add(newExped);
         }
     }
 
@@ -221,6 +201,8 @@ public class ExpedienteOwController {
     @FXML
     private void handleEditExpte() {
         ExpedienteDTO selectedExped = personTable.getSelectionModel().getSelectedItem();
+        Expediente exped = new Expediente();
+        selectedExped = exped.recuperaDatosExpedi(selectedExped);
         if (selectedExped != null) {
             boolean okClicked = mainApp.showExpedienteEditDialog(selectedExped);
             if (okClicked) {
@@ -231,8 +213,8 @@ public class ExpedienteOwController {
         } else {
             // Nothing selected
             //Dialogs.showWarningDialog(mainApp.getPrimaryStage(),
-            //        "Please select a person in the table.",
-            //        "No Person Selected", "No Selection");
+            //        "Seleccione un expediente de la tabla.",
+            //        "No ha seleccionado ningún expediente", "Nada seleccionado");
             Dialogs.create()
                 .title("Nada seleccionado")
                 .masthead("No ha seleccionado ningún expediente.")
