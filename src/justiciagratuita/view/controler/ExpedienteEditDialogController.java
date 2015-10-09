@@ -5,14 +5,25 @@
  */
 package justiciagratuita.view.controler;
 
+import java.io.IOException;
+import java.util.Optional;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import justiciagratuita.JusticiaGratuita;
 import justiciagratuita.dao.PersonaDao;
 import justiciagratuita.dao.TasuntoDao;
 import justiciagratuita.dao.TdocumentoDao;
@@ -115,10 +126,11 @@ public class ExpedienteEditDialogController {
                                         + "\nPor favor introduzca un " + tipoIdentificadorField.getValue() + " válido.")
                                 .showError();
                     }
-                    identificadorField.requestFocus();
+                    //identificadorField.requestFocus();
                     // Hacer que el foco se quede en el campo, si hay error
                 } else {
-                    recuperaPersona((TdocumentoDTO) tipoIdentificadorField.getValue(), identificadorField.getText());
+                    expdte.setSolicitante(recuperaPersona((TdocumentoDTO) tipoIdentificadorField.getValue(), identificadorField.getText()));
+                    rellenaDatosPersonales(expdte.getSolicitante());
                 }
             }
         });
@@ -206,11 +218,7 @@ public class ExpedienteEditDialogController {
             Expediente exped = new Expediente();
             if (expdte.getId() > 0 ) {
                 // Modificando un expediente
-                Dialogs.create()
-                        .title("FALTA PROGRAMACIÓN")
-                        .masthead("Hay que hacer el proceso de guardar los datos del expediente")
-                        .message("")
-                        .showError();
+                codGuarda = exped.guardaExpediente(expdte);
             } else {
                 // expediente nuevo
                 codGuarda = exped.guardaNewExpediente(expdte);
@@ -235,6 +243,15 @@ public class ExpedienteEditDialogController {
     private void handleCancel() {
         dialogStage.close();
     }
+    
+    private PersonaDTO handleNewPerson() {
+        PersonaDTO person = new PersonaDTO(-1, null, null, null, (TdocumentoDTO)tipoIdentificadorField.getValue(), identificadorField.getText());
+        boolean okClicked = showPersonEditDialog(person);
+        if (okClicked) {
+                return person;
+        }
+        return null;
+    }
 
     /**
      * Validates the user input in the text fields.
@@ -244,6 +261,9 @@ public class ExpedienteEditDialogController {
     private boolean isInputValid() {
         String errorMessage = "";
 
+        if (expdte.getSolicitante() == null || ValidationsUtil.isCadenaVacia(identificadorField.getText()) ) {
+            errorMessage += "Los datos del solicitante están vacios!\n";
+        }  
         if (ValidationsUtil.isCadenaVacia(anyoField.getText())) {
             errorMessage += "El año del expediente está vacío!\n";
         } else if (DateUtil.validYear(anyoField.getText()) ) {
@@ -273,16 +293,13 @@ public class ExpedienteEditDialogController {
             errorMessage += "Fecha de entrada no válida!\n";
         } else if (!DateUtil.validDate(fecEntradaColField.getText())) {
             errorMessage += "Fecha de entrada no válida. Formato dd/mm/yyyy!\n";
-        } else if (DateUtil.parse(fecEntradaColField.getText()).isAfter(DateUtil.now()) ){
+        } else if (!DateUtil.parse(fecEntradaColField.getText()).isEqual(DateUtil.now()) && DateUtil.parse(fecEntradaColField.getText()).isAfter(DateUtil.now()) ){
             errorMessage += "Fecha de entrada no válida. No puede ser mayor al día actual. !\n";
         }
 
         if (errorMessage.length() == 0) {
             return true;
         } else {
-            // Show the error message
-            //Dialogs.showErrorDialog(dialogStage, errorMessage,
-            //        "Por favor corrija los errores", "Error en los campos");
             Dialogs.create()
                     .title("Error en los campos")
                     .masthead("Hay errores en algunos campos")
@@ -326,35 +343,97 @@ public class ExpedienteEditDialogController {
         return options;
     }
 
-    private void recuperaPersona(TdocumentoDTO tipoDoc, String documento) {
+    private PersonaDTO recuperaPersona(TdocumentoDTO tipoDoc, String documento) {
         PersonaDao per = new PersonaDao();
         PersonaDTO solic = per.getPersonaByDocu(tipoDoc.getId(), documento);
         if (solic == null) {
-            Dialogs.create()
-                    .title("Falta programación")
-                    .masthead("Falta código por programar.")
-                    .message("Tenemos que llamar a la pantalla para crear la persona")
-                    .showError();
-        } else {
-            expdte.setSolicitante(solic);
-            rellenaDatosPersonales(solic);
             
-
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Persona no encontrada");
+            alert.setHeaderText("El " + tipoDoc.getDescripcion() + " " + documento + " no está en la base de datos.");
+            alert.setContentText("Si es correcto y es un nuevo solicitante pulse: Nuevo \nSi se ha equivocado de documento pulse: Cancelar");
+            ButtonType buttonTypeNuevo = new ButtonType("Nuevo");
+            ButtonType buttonTypeCancel = new ButtonType("Cancelar", ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(buttonTypeNuevo, buttonTypeCancel);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == buttonTypeNuevo){ 
+                // programa nueva persona
+                return handleNewPerson();
+            } else {
+                // Ha pulsado cancelar o cerrar
+                
+            }
+            return null;
+        } else {
+            return solic;
         }
     }
     
     private void rellenaDatosPersonales(PersonaDTO solic) {
-        solicitanteNombreLabel.setText(solic.toString());
-        direccionLabel.setText(solic.getDireccion());
-        codigoPostalLabel.setText(solic.getCodigoPostal() + "");
-        localidadLabel.setText(solic.getLocalidad());
-        provinciaLabel.setText(solic.getProvincia());
-        telefonoLabel.setText(solic.getTelefono());
-        movilLabel.setText(solic.getMovil());
+        if (solic != null) {
+            solicitanteNombreLabel.setText(solic.toString());
+            direccionLabel.setText(solic.getDireccion());
+            codigoPostalLabel.setText(solic.getCodigoPostal() + "");
+            localidadLabel.setText(solic.getLocalidad());
+            provinciaLabel.setText(solic.getProvincia());
+            telefonoLabel.setText(solic.getTelefono());
+            movilLabel.setText(solic.getMovil());
+        } else {
+            solicitanteNombreLabel.setText("");
+            direccionLabel.setText("");
+            codigoPostalLabel.setText("");
+            localidadLabel.setText("");
+            provinciaLabel.setText("");
+            telefonoLabel.setText("");
+            movilLabel.setText("");
+            identificadorField.setText("");
+        }
     }
     
     private String recuperaSiguienteTurno(String anyo) {
         Expediente exped = new Expediente();
         return String.valueOf(exped.siguienteTurno(Integer.parseInt(anyo)));
+    }
+    
+    /**
+     * Opens a dialog to edit details for the specified person. If the user
+     * clicks OK, the changes are saved into the provided person object and true
+     * is returned.
+     *
+     * @param person the person object to be edited
+     * @return true if the user clicked OK, false otherwise.
+     */
+    public boolean showPersonEditDialog(PersonaDTO person) {
+        try {
+    // Load the fxml file and create a new stage for the popup
+            //FXMLLoader loader = new FXMLLoader(JusticiaGratuita.class.getResource("view/PersonEditDialog.fxml"));
+            //AnchorPane page = (AnchorPane) loader.load();
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(JusticiaGratuita.class.getResource("view/PersonEditDialog.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Edit Person");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(this.dialogStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Set the person into the controller
+            PersonEditDialogController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setPerson(person);
+
+            // Show the dialog and wait until the user closes it
+            dialogStage.showAndWait();
+
+            return controller.isOkClicked();
+
+        } catch (IOException e) {
+            // Exception gets thrown if the fxml file could not be loaded
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -17,12 +17,12 @@ import util.DateUtil;
  */
 public class Expediente extends BaseLogic {
     
-    private final static int ESTADOTRAMITA = 1;
+    public final static int ESTADOTRAMITA = 1;
     
     
-    public List<ExpedienteDTO> listExpedienteEnTramite() {
+    public List<ExpedienteDTO> listExpedientesByEstado(EstadoExpDTO estado) {
         ExpedienteDao dao = new ExpedienteDao();
-        return dao.listExpedienteByEstado(ESTADOTRAMITA);
+        return dao.listExpedienteByEstado(estado);
     }
     
     /**
@@ -68,5 +68,15 @@ public class Expediente extends BaseLogic {
             expediente.setId(idExpe);
         }
         return idExpe;
+    }
+    
+     /**
+     * Guarda los datos del expediente en la BBDD
+     * @param expediente datos del expediente a guardar
+     * @return código único (id) del nuevo expediente
+     */
+    public int guardaExpediente (ExpedienteDTO expediente) {
+        ExpedienteDao expedao = new ExpedienteDao();
+        return expedao.guardaExpediente(expediente);
     }
 }

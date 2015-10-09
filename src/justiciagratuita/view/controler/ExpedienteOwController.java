@@ -11,6 +11,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import justiciagratuita.JusticiaGratuita;
 import justiciagratuita.modelo.ExpedienteDTO;
+import justiciagratuita.modelo.PersonaDTO;
+import justiciagratuita.modelo.TasuntoDTO;
 import justiciagratuita.modelo.logica.Expediente;
 import org.controlsfx.dialog.Dialogs;
 import util.DateUtil;
@@ -22,12 +24,14 @@ public class ExpedienteOwController {
     @FXML
     private TableView<ExpedienteDTO> personTable;
     @FXML
-    private TableColumn<ExpedienteDTO, String> firstNameColumn;
+    private TableColumn<ExpedienteDTO, TasuntoDTO> asuntoColumn;
     @FXML
-    private TableColumn<ExpedienteDTO, String> lastNameColumn;
+    private TableColumn<ExpedienteDTO, PersonaDTO> nombreSolicColumn;
     @FXML
     private TableColumn<ExpedienteDTO, String> numExpteColumn;
-
+    
+    @FXML
+    private Label estadoConsultaLabel;
     @FXML
     private Label solicitanteNombreField;
     @FXML
@@ -70,12 +74,12 @@ public class ExpedienteOwController {
         //firstNameColumn.setCellValueFactory(new PropertyValueFactory<PersonaDTO, String>("nombre"));
         //lastNameColumn.setCellValueFactory(new PropertyValueFactory<PersonaDTO, String>("pApellido"));
         // Initialize the person table with the two columns. Para Java 8
-        firstNameColumn.setCellValueFactory(
-            cellData -> cellData.getValue().solicitanteNombreProperty());
-        lastNameColumn.setCellValueFactory(
-            cellData -> cellData.getValue().solicitanteNombreProperty());
+        asuntoColumn.setCellValueFactory(
+            cellData -> cellData.getValue().asuntoProperty());
+        nombreSolicColumn.setCellValueFactory(
+            cellData -> cellData.getValue().getSolicitanteProperty());
         numExpteColumn.setCellValueFactory(
-            cellData -> cellData.getValue().numExpedienteProperty());
+            cellData -> cellData.getValue().numTurnoCompProperty());
         
 
         // Auto resize columns
@@ -107,7 +111,8 @@ public class ExpedienteOwController {
         this.mainApp = mainApp;
 
         // Add observable list data to the table
-        personTable.setItems(mainApp.getPersonData());
+        personTable.setItems(mainApp.getExpedientesData());
+        estadoConsultaLabel.setText(mainApp.getEstadoExpedientesData().toString());
     }
     
     /**
@@ -121,7 +126,7 @@ public class ExpedienteOwController {
             // Fill the labels with info from the person object.
             Expediente exped = new Expediente();
             expediente = exped.recuperaDatosExpedi(expediente);
-            solicitanteNombreField.setText(expediente.getSolicitanteNombre());
+            solicitanteNombreField.setText(expediente.getSolicitanteProperty().getValue().nombreApellCompleto());
             documentoSolicField.setText(expediente.getDocumentoSolic());
             juzgadoField.setText(expediente.getJuzgadoNombre());
             if (expediente.getLetrado() != null) {
@@ -190,7 +195,7 @@ public class ExpedienteOwController {
         ExpedienteDTO newExped = new ExpedienteDTO();
         boolean okClicked = mainApp.newExpedienteEditDialog(newExped);
         if (okClicked) {
-            mainApp.getPersonData().add(newExped);
+            mainApp.getExpedientesData().add(newExped);
         }
     }
 
@@ -236,7 +241,7 @@ public class ExpedienteOwController {
         int selectedIndex = personTable.getSelectionModel().getSelectedIndex();
         personTable.setItems(null);
         personTable.layout();
-        personTable.setItems(mainApp.getPersonData());
+        personTable.setItems(mainApp.getExpedientesData());
         // Must set the selected index again (see http://javafx-jira.kenai.com/browse/RT-26291)
         personTable.getSelectionModel().select(selectedIndex);
     }

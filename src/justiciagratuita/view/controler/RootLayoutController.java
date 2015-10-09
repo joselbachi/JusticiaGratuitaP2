@@ -7,7 +7,6 @@ package justiciagratuita.view.controler;
 
 import javafx.fxml.FXML;
 import justiciagratuita.JusticiaGratuita;
-import justiciagratuita.view.controler.ExpedienteOwController;
 import org.controlsfx.dialog.Dialogs;
 
 /**
@@ -33,8 +32,12 @@ public class RootLayoutController {
      */
     @FXML
     private void handleNew() {
-        mainApp. getPersonData().clear();
-        //mainApp.setPersonFilePath(null);
+        //mainApp. getExpedientesData().clear();
+        Dialogs.create()
+            .title("Falta programación")
+            .masthead("")
+            .message("")
+            .showInformation();
     }
 
     

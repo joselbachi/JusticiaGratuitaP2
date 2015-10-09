@@ -33,7 +33,7 @@ public class PersonEditDialogController {
     @FXML
     private TextField sApellidoField;
     @FXML
-    private ComboBox idTipoIdentificadorField;
+    private ComboBox tipoIdentificadorField;
     @FXML
     private TextField identificadorField;
     @FXML
@@ -64,18 +64,18 @@ public class PersonEditDialogController {
     @FXML
     private void initialize() {
         recuperaListas();
-        idTipoIdentificadorField.setItems(listaTiposDocumento);
-        idTipoIdentificadorField.setPromptText("Tipo doc.");
+        tipoIdentificadorField.setItems(listaTiposDocumento);
+        tipoIdentificadorField.setPromptText("Tipo doc.");
         // control
         identificadorField.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             if (!newValue) {
                 postDocumento();
-                if (!ValidationsUtil.isCadenaVacia(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) idTipoIdentificadorField.getValue()))) {
+                if (!ValidationsUtil.isCadenaVacia(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) tipoIdentificadorField.getValue()))) {
                     Dialogs.create()
                         .title("Error en el identificador")
                         .masthead("Hay errores en algunos campos")
-                        .message(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) idTipoIdentificadorField.getValue())+
-                                "\nPor favor introduzca un "+ (String )idTipoIdentificadorField.getValue() + " válido")
+                        .message(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) tipoIdentificadorField.getValue())+
+                                "\nPor favor introduzca un "+ (String )tipoIdentificadorField.getValue() + " válido")
                         .showError();
                 }
             }
@@ -102,7 +102,7 @@ public class PersonEditDialogController {
       pApellidoField.setText(person.getpApellido());
       sApellidoField.setText(person.getsApellido());
       //idTipoIdentificadorField.setItems(options);
-      idTipoIdentificadorField.setValue(person.getTipoIdentificador().getId());
+      tipoIdentificadorField.setValue(person.getTipoIdentificador().getId());
       identificadorField.setText(person.getIdentificador());
       direccionField.setText(person.getDireccion());
       codigoPostalField.setText(Integer.toString(person.getCodigoPostal()));
@@ -136,7 +136,7 @@ public class PersonEditDialogController {
             person.setFecNac(DateUtil.parse(fecNacField.getText()));
 
             person.setsApellido(sApellidoField.getText());
-            person.setTipoIdentificador( new TdocumentoDTO((String) idTipoIdentificadorField.getValue(), (String) idTipoIdentificadorField.getValue()));
+            person.setTipoIdentificador(new TdocumentoDTO((String) tipoIdentificadorField.getValue(), (String) tipoIdentificadorField.getValue()));
             person.setIdentificador(identificadorField.getText());
             person.setProvincia(provinciaField.getText());
             person.setTelefono(telefonoField.getText());
@@ -167,8 +167,8 @@ public class PersonEditDialogController {
         if (ValidationsUtil.isCadenaVacia(identificadorField.getText())) {
             errorMessage += "El documento identificador está vacío!\n"; 
         } else {
-            if (!ValidationsUtil.isCadenaVacia(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) idTipoIdentificadorField.getValue()))) {
-                errorMessage += ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) idTipoIdentificadorField.getValue())+"!\n"; 
+            if (!ValidationsUtil.isCadenaVacia(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) tipoIdentificadorField.getValue()))) {
+                errorMessage += ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) tipoIdentificadorField.getValue())+"!\n"; 
             }
         }
         

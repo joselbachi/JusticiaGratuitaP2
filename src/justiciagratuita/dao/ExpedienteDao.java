@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import justiciagratuita.exceptions.DatabaseInUseException;
+import justiciagratuita.modelo.EstadoExpDTO;
 import justiciagratuita.modelo.ExpedienteDTO;
+import util.ValidationsUtil;
 
 /**
  *
@@ -84,7 +86,7 @@ public class ExpedienteDao extends BaseDao {
         return null;
     }
     
-    public List<ExpedienteDTO> listExpedienteByEstado (int idEstado) {
+    public List<ExpedienteDTO> listExpedienteByEstado (EstadoExpDTO estado) {
         List<ExpedienteDTO> expedienteData = new ArrayList();
         ExpedienteDTO objeto; 
         ResultSet rs = null;
@@ -98,7 +100,7 @@ public class ExpedienteDao extends BaseDao {
         try {
             globalConnection = super.openDBConnection();
             ppStatemt = globalConnection.prepareStatement(checkStr);
-            ppStatemt.setInt(1, idEstado);
+            ppStatemt.setInt(1, estado.getId());
 
             rs = ppStatemt.executeQuery();
 
@@ -206,14 +208,11 @@ public class ExpedienteDao extends BaseDao {
         }
         return -1;
     }
-    
-   
-    // guardaExpediente
-    
+
     /**
      * Guarda los datos de un expediente nuevo
      * @param expediente que va a a guardarse
-     * @return código ID único identificador del expediente
+     * @return código ID único identificador del expediente, -1 en caso de error
      */
     public int guardaNewExpediente(ExpedienteDTO expediente) {
         Statement statemt = null;
@@ -237,8 +236,7 @@ public class ExpedienteDao extends BaseDao {
             insrtStr = insrtStr + "   FECENTRADADEL, ";
         }
         insrtStr = insrtStr
-                + "   IDESTADO, "
-                + "   FECMODIFICA) "
+                + "   IDESTADO) "
                 + " values ("
                 + idExped + ", "
                 + expediente.getSolicitante().getId() + ", ";
@@ -260,8 +258,7 @@ public class ExpedienteDao extends BaseDao {
             insrtStr = insrtStr + " '" + util.DateUtil.convertToDatabaseColumn(expediente.getFecEntradaDel()) + "', ";
         }
         insrtStr = insrtStr
-                + expediente.getEstado().getId() + ", "
-                + "   CURRENT_TIMESTAMP()) ";
+                + expediente.getEstado().getId() + ") ";
 
         try {
             globalConnection = super.openDBConnection();
@@ -279,6 +276,81 @@ public class ExpedienteDao extends BaseDao {
             try {
                 if (statemt != null && !statemt.isClosed()) {
                     statemt.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            super.closeDBConnection(globalConnection);
+        }
+        return -1;
+    }
+    
+    /**
+     * Guarda los datos de un expediente existente
+     * @param expediente que va a a guardarse
+     * @return código ID único identificador del expediente, -1 en caso de error
+     */
+    public int guardaExpediente(ExpedienteDTO expediente) {
+        PreparedStatement ppStatemt = null;
+
+        String insrtStr = "UPDATE Expediente set ";
+        if (expediente.getJuzgado() != null && expediente.getJuzgado().getId() > 0) {
+            insrtStr = insrtStr + "   IDJUZGADO = ";
+            insrtStr = insrtStr + expediente.getJuzgado().getId() + ", ";
+        } else {
+            insrtStr = insrtStr + "   IDJUZGADO = null, ";
+        }
+        if (expediente.getLetrado() != null && expediente.getLetrado().getId() > 0) {
+            insrtStr = insrtStr + "   IDLETRADO = ";
+            insrtStr = insrtStr + expediente.getLetrado().getId() + ", ";
+        } else {
+            insrtStr = insrtStr + "   IDLETRADO = null, ";
+        }
+        if (expediente.getProcurador() != null && expediente.getProcurador().getId() > 0) {
+            insrtStr = insrtStr + "   IDPROCURADOR = ";
+            insrtStr = insrtStr + expediente.getProcurador().getId() + ", ";
+        } else {
+            insrtStr = insrtStr + "   IDPROCURADOR = null, ";
+        }
+        if (expediente.getNumExped() > 0 ) {
+            insrtStr = insrtStr + "   NUMEXPED = ";
+            insrtStr = insrtStr + expediente.getNumExped() + ", ";
+        } else {
+            insrtStr = insrtStr + "   NUMEXPED = null, ";
+        }
+        insrtStr = insrtStr + "   IDASUNTO = ";
+        insrtStr = insrtStr + expediente.asuntoProperty().getValue().getId() + ", ";
+        if (expediente.getViolencia() != null ) {
+            insrtStr = insrtStr + "   VIOLENCIA = ";
+            insrtStr = insrtStr + expediente.getViolencia() + ", ";
+        } else {
+            insrtStr = insrtStr + "   VIOLENCIA = null, ";
+        }
+        if (!ValidationsUtil.isCadenaVacia(expediente.getObservaciones())) {
+            insrtStr = insrtStr + "   OBSERVACIONES = '";
+            insrtStr = insrtStr + expediente.getObservaciones() + "', ";
+        } else {
+            insrtStr = insrtStr + "   OBSERVACIONES = null, ";
+        }
+        insrtStr = insrtStr + "   FECMODIFICA = CURRENT_TIMESTAMP() "
+                + " where ID = ? ";
+
+        try {
+            globalConnection = super.openDBConnection();
+            ppStatemt = globalConnection.prepareStatement(insrtStr);
+            ppStatemt.setInt(1, expediente.getId());
+
+            if (ppStatemt.executeUpdate() == 1) {
+                return expediente.getId();
+            } else {
+                return -1;
+            }
+        } catch (DatabaseInUseException | NullPointerException | SQLException dbEx) {
+            Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, dbEx);
+        } finally {
+            try {
+                if (ppStatemt != null && !ppStatemt.isClosed()) {
+                    ppStatemt.close();
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(UsuarioDao.class.getName()).log(Level.SEVERE, null, ex);

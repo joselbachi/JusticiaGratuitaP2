@@ -55,6 +55,10 @@ public class EstadoExpDTO extends BaseDTO {
     public void setFecBaja(LocalDateTime FecBaja) {
         this.FecBaja = FecBaja;
     }
-    
+
+    @Override
+    public String toString() {
+        return descripcion;
+    }
     
 }

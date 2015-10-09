@@ -25,14 +25,9 @@ public class ExpedienteDTO extends BaseDTO {
     private final String FORMT_NUMEXPED = "%04d";
 
     private final IntegerProperty id;
-//    private final IntegerProperty idSolicitante;
-//    private final IntegerProperty idJuzgado;
-//    private final IntegerProperty idLetrado;
-//    private final IntegerProperty idProcurador;
     private final IntegerProperty numTurno; // sólo número secuencial.
     private final IntegerProperty numExped; // sólo número secuencial.
     private final IntegerProperty anyo;
-//    private final StringProperty asunto;
     private final IntegerProperty idComision;
     private final BooleanProperty violencia;
     private final ObjectProperty<LocalDateTime> fecEntradaCol;
@@ -41,21 +36,8 @@ public class ExpedienteDTO extends BaseDTO {
     private final ObjectProperty<LocalDate> fecResolucion;
     private final ObjectProperty<LocalDate> fecImpugnacion;
     private final StringProperty observaciones;
-//    private final IntegerProperty idEstado;
-//    private final StringProperty numExpediente; // anyo/nunExped
-    private final StringProperty numTurnoComp; // anyo/nunTurno
+    private final StringProperty numTurnoComp; 
     private final ObjectProperty<EstadoExpDTO> estado;
-    
-    /* Auxiliares para presentación */
-/*    private final StringProperty nombreSolic = new SimpleStringProperty();
-    private final StringProperty apellidosSolic = new SimpleStringProperty();*/
-// --    private final StringProperty solicitanteNombre = new SimpleStringProperty();
- //   private final StringProperty documentoSolic = new SimpleStringProperty();
-//    private final ObjectProperty<JuzgadoDTO> juzgado = new SimpleObjectProperty();
-//    private final StringProperty letradoNombre = new SimpleStringProperty();
-//    private final StringProperty procuradorNombre = new SimpleStringProperty();
-//    private final ObjectProperty<LocalDate> fecEntrada = new SimpleObjectProperty();
-    
     
     /* actores del expediente */
     private final ObjectProperty<PersonaDTO> solicitante;
@@ -92,8 +74,6 @@ public class ExpedienteDTO extends BaseDTO {
         this.numExped = new SimpleIntegerProperty();
         this.numTurnoComp = new SimpleStringProperty(this.anyo.intValue()+"/"+String.format(FORMT_NUMEXPED,this.numTurno.intValue()));
 //        this.numExpediente = new SimpleStringProperty(this.anyo.intValue()+"/"+String.format(FORMT_NUMEXPED,this.numExped.intValue()));
-
-//        this.setSolicitante(solicitante);
         this.asunto = new SimpleObjectProperty<TasuntoDTO>(asunto);
     }
 
@@ -112,32 +92,7 @@ public class ExpedienteDTO extends BaseDTO {
     public IntegerProperty idProperty() {
         return id;
     }
-/*
-    public int getIdSolicitante() {
-        return idSolicitante.intValue();
-    }
 
-    public void setIdSolicitante(int idSolicitante) {
-        this.idSolicitante.set(idSolicitante);
-    }
-    
-    public IntegerProperty idSolicitanteProperty() {
-        return idSolicitante;
-    }
-    */
-
-/*    public int getIdJuzgado() {
-        return idJuzgado.intValue();
-    }
-
-    public void setIdJuzgado(int idJuzgado) {
-        this.idJuzgado.set(idJuzgado);
-    }
-    
-    public IntegerProperty idJuzgadoProperty() {
-        return idJuzgado;
-    }
-*/
     public JuzgadoDTO getJuzgado() {
         return juzgado;
     }
@@ -481,6 +436,10 @@ public class ExpedienteDTO extends BaseDTO {
         return this.anyo.intValue()+"\\"+String.format(FORMT_NUMEXPED, this.numTurno.intValue());
     }
     
+    public ObjectProperty<PersonaDTO> getSolicitanteProperty() {
+        return this.solicitante;
+    }
+    
     public PersonaDTO getSolicitante() {
         return this.solicitante.get();
     }
@@ -488,50 +447,7 @@ public class ExpedienteDTO extends BaseDTO {
     public void setSolicitante(PersonaDTO solicitante) {
         this.solicitante.set(solicitante);
     }
- /*   Se tiene que asignar en la creación del expediente */
-//    private void setSolicitante(PersonaDTO solicitante) {
-//        this.solicitante = solicitante;
-//        if (solicitante != null && solicitante.getId() >= 0 ) {
-/*            this.nombreSolic.set(solicitante.getNombre());
-            this.apellidosSolic.set(solicitante.getApellidos());*/
-//            this.solicitanteNombre.set(solicitante.apellNombreCompleto());
-//        }
-//    }
-    
-    
-   /* campos auxiliares */ 
-    /**
-     * Nombre del solicitante. Sólo el nombre, para nombre completo ver @
-     * @return 
-     */
-/*    public StringProperty nombreSolicProperty() {
-        return nombreSolic;
-    }
-    
-    public String getNombreSolic() {
-        return nombreSolic.get();
-    }
-    
-    public StringProperty apellidosSolicProperty() {
-        return apellidosSolic;
-    }
-    
-    public String getApellidos() {
-        return apellidosSolic.get();
-    }
-  */  
-    public StringProperty solicitanteNombreProperty() {
-        return new SimpleStringProperty(solicitante.get().toString());
-    }
 
-    public String getSolicitanteNombre() {
-        return solicitante.get().toString();
-    }
- 
-/*    public StringProperty documentoSolicProperty() {
-        return documentoSolic;
-    }
-*/
     public String getDocumentoSolic() {
         if (solicitante != null && solicitante.get() != null) {
             return solicitante.get().getDocumento();

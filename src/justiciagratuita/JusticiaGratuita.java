@@ -5,13 +5,11 @@
  */
 package justiciagratuita;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,8 +22,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import justiciagratuita.dao.BaseDao;
+import justiciagratuita.dao.EstadoExpDao;
 import justiciagratuita.dao.PersonaDao;
 import justiciagratuita.exceptions.DatabaseInUseException;
+import justiciagratuita.modelo.EstadoExpDTO;
 import justiciagratuita.modelo.ExpedienteDTO;
 import justiciagratuita.modelo.PersonaDTO;
 import justiciagratuita.modelo.UsuarioDTO;
@@ -55,7 +55,8 @@ public class JusticiaGratuita extends Application {
 
     private BorderPane rootLayout;
 
-    private ObservableList<ExpedienteDTO> personData;
+    private ObservableList<ExpedienteDTO> expedientesData;
+    private EstadoExpDTO EstadoExpedientesData;
 
     /**
      * @param args the command line arguments
@@ -66,7 +67,7 @@ public class JusticiaGratuita extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        personData = cargaExpedientesActuales();
+        expedientesData = cargaExpedientesInicio();
         try {
             stage = primaryStage;
             stage.setTitle("Justicia Gratuita");
@@ -86,9 +87,11 @@ public class JusticiaGratuita extends Application {
         }
     }
     
-    private ObservableList<ExpedienteDTO> cargaExpedientesActuales() {
+    private ObservableList<ExpedienteDTO> cargaExpedientesInicio() {
         Expediente expe = new Expediente();
-        List<ExpedienteDTO> datos = expe.listExpedienteEnTramite();
+        EstadoExpDao estaDao = new EstadoExpDao();
+        EstadoExpedientesData = estaDao.getEstadoBy(Expediente.ESTADOTRAMITA);
+        List<ExpedienteDTO> datos = expe.listExpedientesByEstado(EstadoExpedientesData);
         return FXCollections.observableArrayList(datos); 
     }
 
@@ -321,9 +324,14 @@ public class JusticiaGratuita extends Application {
      *
      * @return
      */
-    public ObservableList<ExpedienteDTO> getPersonData() {
-        return personData;
+    public ObservableList<ExpedienteDTO> getExpedientesData() {
+        return expedientesData;
     }
+    
+    public EstadoExpDTO getEstadoExpedientesData() {
+        return EstadoExpedientesData;
+    }
+    
     /*
      Crea un usuario para conectarse en las pruebas sin tener que hacer loggin
      */
