@@ -111,7 +111,7 @@ public class ExpedienteEditDialogController {
         identificadorField.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             if (!newValue) {
                 postDocumento();
-                if (!ValidationsUtil.isCadenaVacia(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) tipoIdentificadorField.getValue()))) {
+                if (!ValidationsUtil.isCadenaVacia(identificadorField.getText()) && !ValidationsUtil.isCadenaVacia(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) tipoIdentificadorField.getValue()))) {
                     if (tipoIdentificadorField.getValue() == null) {
                         Dialogs.create()
                                 .title("Error validación")
@@ -129,15 +129,17 @@ public class ExpedienteEditDialogController {
                     //identificadorField.requestFocus();
                     // Hacer que el foco se quede en el campo, si hay error
                 } else {
-                    expdte.setSolicitante(recuperaPersona((TdocumentoDTO) tipoIdentificadorField.getValue(), identificadorField.getText()));
-                    rellenaDatosPersonales(expdte.getSolicitante());
+                    if (!ValidationsUtil.isCadenaVacia(identificadorField.getText())) {
+                        expdte.setSolicitante(recuperaPersona((TdocumentoDTO) tipoIdentificadorField.getValue(), identificadorField.getText()));
+                        rellenaDatosPersonales(expdte.getSolicitante());
+                    }
                 }
             }
         });
         
         fecEntradaColField.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             if (!newValue) {
-                if (!DateUtil.validDate(fecEntradaColField.getText())) {
+                if (!ValidationsUtil.isCadenaVacia(fecEntradaColField.getText()) && !DateUtil.validDate(fecEntradaColField.getText())) {
                     Dialogs.create()
                                 .title("Error validación")
                                 .masthead("Error en la fecha de entrada al colegio")
@@ -414,7 +416,7 @@ public class ExpedienteEditDialogController {
             AnchorPane page = (AnchorPane) loader.load();
 
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Person");
+            dialogStage.setTitle("Editar Persona");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(this.dialogStage);
             Scene scene = new Scene(page);

@@ -7,7 +7,6 @@ package justiciagratuita;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -17,6 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
@@ -31,6 +31,7 @@ import justiciagratuita.modelo.PersonaDTO;
 import justiciagratuita.modelo.UsuarioDTO;
 import justiciagratuita.modelo.logica.Expediente;
 import justiciagratuita.security.Authenticator;
+import justiciagratuita.view.controler.AnnoMesStatisticsController;
 import justiciagratuita.view.controler.ExpedienteEditDialogController;
 import justiciagratuita.view.controler.LoginController;
 import justiciagratuita.view.controler.ExpedienteOwController;
@@ -56,7 +57,7 @@ public class JusticiaGratuita extends Application {
     private BorderPane rootLayout;
 
     private ObservableList<ExpedienteDTO> expedientesData;
-    private EstadoExpDTO EstadoExpedientesData;
+    private EstadoExpDTO estadoExpedientesData;
 
     /**
      * @param args the command line arguments
@@ -67,7 +68,7 @@ public class JusticiaGratuita extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        expedientesData = cargaExpedientesInicio();
+        cargaExpedientesInicio();
         try {
             stage = primaryStage;
             stage.setTitle("Justicia Gratuita");
@@ -87,14 +88,24 @@ public class JusticiaGratuita extends Application {
         }
     }
     
-    private ObservableList<ExpedienteDTO> cargaExpedientesInicio() {
-        Expediente expe = new Expediente();
+    private void cargaExpedientesInicio() {
         EstadoExpDao estaDao = new EstadoExpDao();
-        EstadoExpedientesData = estaDao.getEstadoBy(Expediente.ESTADOTRAMITA);
-        List<ExpedienteDTO> datos = expe.listExpedientesByEstado(EstadoExpedientesData);
-        return FXCollections.observableArrayList(datos); 
+        estadoExpedientesData = estaDao.getEstadoBy(Expediente.ESTADOTRAMITA);
+        refrescaExpedientes();
     }
-
+    
+    public void refrescaExpedientes() {
+        Expediente expe = new Expediente();
+        expedientesData = FXCollections.observableArrayList(expe.listExpedientesByEstado(estadoExpedientesData));
+        if (expedientesData.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("No se han encontrado expedientes.");
+            alert.setHeaderText("No hay expedientes en el estado seleccionado: " + estadoExpedientesData.toString());
+            alert.setContentText("Seleecione otro estado");
+            alert.showAndWait();
+        }
+    }
+   
     @Override
     public void stop() throws Exception {
         BaseDao cierra = new BaseDao();
@@ -222,6 +233,7 @@ public class JusticiaGratuita extends Application {
             // Give the controller access to the main app.
             ExpedienteOwController controller = loader.getController();
             controller.setMainApp(this);
+            
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -247,7 +259,7 @@ public class JusticiaGratuita extends Application {
             AnchorPane page = (AnchorPane) loader.load();
 
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Edit Person");
+            dialogStage.setTitle("Editando persona");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(stage);
             Scene scene = new Scene(page);
@@ -318,6 +330,33 @@ public class JusticiaGratuita extends Application {
             return false;
         }
     }
+    
+    /**
+     * Opens a dialog to show birthday statistics.
+     */
+    public void showAnnoMesStatistics() {
+        try {
+            // Load the fxml file and create a new stage for the popup.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(JusticiaGratuita.class.getResource("view/AnnoMesStatistics.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Estadísticas colegio por mes");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(stage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            // Set the persons into the controller.
+            AnnoMesStatisticsController controller = loader.getController();
+            controller.setExpedientesData(expedientesData);
+
+            dialogStage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Returns the data as an observable list of Persons.
@@ -329,7 +368,12 @@ public class JusticiaGratuita extends Application {
     }
     
     public EstadoExpDTO getEstadoExpedientesData() {
-        return EstadoExpedientesData;
+        return estadoExpedientesData;
+    }
+    
+    public void setEstadoExpedientesData(EstadoExpDTO estado) {
+        estadoExpedientesData = estado;
+        refrescaExpedientes();
     }
     
     /*

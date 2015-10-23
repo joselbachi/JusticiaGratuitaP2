@@ -26,6 +26,11 @@
                   <MenuItem mnemonicParsing="false" onAction="#handleNew" text="Nuevo-Turno" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Estadísticas">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#handleShowBirthdayStatistics" text="Por mes colegio" />
+              </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="Ayuda">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#handleAbout" text="Acerca de" />

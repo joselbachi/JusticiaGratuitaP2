@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import justiciagratuita.dao.TdocumentoDao;
 import justiciagratuita.modelo.PersonaDTO;
 import justiciagratuita.modelo.TdocumentoDTO;
+import justiciagratuita.modelo.logica.Persona;
 import org.controlsfx.dialog.Dialogs;
 import util.DateUtil;
 import util.ValidationsUtil;
@@ -55,17 +56,18 @@ public class PersonEditDialogController {
     private PersonaDTO person;
     private boolean okClicked = false;
     
-    ObservableList<TdocumentoDTO> listaTiposDocumento;
-
     /**
      * Initializes the controller class. This method is automatically called
      * after the fxml file has been loaded.
      */
     @FXML
     private void initialize() {
-        recuperaListas();
-        tipoIdentificadorField.setItems(listaTiposDocumento);
+        tipoIdentificadorField.setItems(itemsTipoDocumento());
         tipoIdentificadorField.setPromptText("Tipo doc.");
+        tipoIdentificadorField.setEditable(false);
+        tipoIdentificadorField.setDisable(true);
+        identificadorField.setEditable(false);
+        identificadorField.setDisable(true);
         // control
         identificadorField.focusedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             if (!newValue) {
@@ -75,7 +77,7 @@ public class PersonEditDialogController {
                         .title("Error en el identificador")
                         .masthead("Hay errores en algunos campos")
                         .message(ValidationsUtil.validaDocumento(identificadorField.getText(), (TdocumentoDTO) tipoIdentificadorField.getValue())+
-                                "\nPor favor introduzca un "+ (String )tipoIdentificadorField.getValue() + " válido")
+                                "\nPor favor introduzca un "+ ((TdocumentoDTO)tipoIdentificadorField.getValue()).getDescripcion() + " válido")
                         .showError();
                 }
             }
@@ -102,7 +104,7 @@ public class PersonEditDialogController {
       pApellidoField.setText(person.getpApellido());
       sApellidoField.setText(person.getsApellido());
       //idTipoIdentificadorField.setItems(options);
-      tipoIdentificadorField.setValue(person.getTipoIdentificador().getId());
+      tipoIdentificadorField.setValue(person.getTipoIdentificador());
       identificadorField.setText(person.getIdentificador());
       direccionField.setText(person.getDireccion());
       codigoPostalField.setText(Integer.toString(person.getCodigoPostal()));
@@ -127,6 +129,7 @@ public class PersonEditDialogController {
      */
     @FXML
     private void handleOk() {
+        int codGuarda = -1;
         if (isInputValid()) {
             person.setNombre(nombreField.getText());
             person.setpApellido(pApellidoField.getText());
@@ -136,15 +139,30 @@ public class PersonEditDialogController {
             person.setFecNac(DateUtil.parse(fecNacField.getText()));
 
             person.setsApellido(sApellidoField.getText());
-            person.setTipoIdentificador(new TdocumentoDTO((String) tipoIdentificadorField.getValue(), (String) tipoIdentificadorField.getValue()));
+            person.setTipoIdentificador((TdocumentoDTO)tipoIdentificadorField.getValue());
             person.setIdentificador(identificadorField.getText());
             person.setProvincia(provinciaField.getText());
             person.setTelefono(telefonoField.getText());
             person.setMovil(movilField.getText());
 
-
-            okClicked = true;
-            dialogStage.close();
+            Persona logic = new Persona();
+            if (person.getId() > 0 ) {
+                // Modificando un expediente
+                codGuarda = logic.guardaPersona(person);
+            } else {
+                // expediente nuevo
+                codGuarda = logic.guardaNewPersona(person);
+            }
+            if (codGuarda < 0) {
+                Dialogs.create()
+                        .title("Error guardando expediente")
+                        .masthead("Se ha producido un error al guardar los datos del expediente.")
+                        .message("Compruebe los archivos de Log para ver el error")
+                        .showError();
+            } else {
+                okClicked = true;
+                dialogStage.close();
+            }
         }
     }
 
@@ -175,7 +193,7 @@ public class PersonEditDialogController {
 
         if (nombreField.getText() == null || nombreField.getText().length() == 0) {
             errorMessage += "El nombre está vacío!\n"; 
-        }
+        } 
         if (pApellidoField.getText() == null || pApellidoField.getText().length() == 0) {
             errorMessage += "El primer apellido está vacío!\n"; 
         }
@@ -234,8 +252,9 @@ public class PersonEditDialogController {
         identificadorField.setText(valida.preparaDocumento(identificadorField.getText()));
     }
     
-    private void recuperaListas() {
-        TdocumentoDao tDoc = new TdocumentoDao();
-        listaTiposDocumento = FXCollections.observableArrayList(tDoc.listaTiposDocumento());
+    private ObservableList<TdocumentoDTO> itemsTipoDocumento() {
+        TdocumentoDao db = new TdocumentoDao();
+        ObservableList<TdocumentoDTO> options = FXCollections.observableArrayList(db.listaTiposDocumento());
+        return options;
     }
 }

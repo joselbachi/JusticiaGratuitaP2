@@ -12,6 +12,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import util.StringUtil;
 
 /**
  *
@@ -53,15 +54,15 @@ public class PersonaDTO extends BaseDTO {
     
     public PersonaDTO(int id, String nombre, String pApellido, String sapellido, TdocumentoDTO tipoIdentificador, String identificador) {
         this.id = new SimpleIntegerProperty(id);
-        this.nombre = new SimpleStringProperty(nombre);
-        this.pApellido = new SimpleStringProperty(pApellido);
-        this.sApellido = new SimpleStringProperty(sapellido);
+        this.nombre = new SimpleStringProperty(StringUtil.limpiaCadena(nombre));
+        this.pApellido = new SimpleStringProperty(StringUtil.limpiaCadena(pApellido));
+        this.sApellido = new SimpleStringProperty(StringUtil.limpiaCadena(sapellido));
         this.tipoIdentificador = new SimpleObjectProperty(tipoIdentificador);
         this.identificador = new SimpleStringProperty(identificador);
         // quitar después de las pruebas
-        this.codigoPostal = new SimpleIntegerProperty(42002);
+        this.codigoPostal = new SimpleIntegerProperty();
         
-        this.fecNac = new SimpleObjectProperty<LocalDate>(LocalDate.now());
+        this.fecNac = new SimpleObjectProperty<LocalDate>();
     }
     
 
@@ -70,7 +71,7 @@ public class PersonaDTO extends BaseDTO {
     }
 
     public void setMovil(String value) {
-        movil.set(value);
+         movil.set(StringUtil.limpiaCadena(value));
     }
 
     public StringProperty movilProperty() {
@@ -82,7 +83,7 @@ public class PersonaDTO extends BaseDTO {
     }
 
     public void setTelefono(String value) {
-        telefono.set(value);
+        telefono.set(StringUtil.limpiaCadena(value));
     }
 
     public StringProperty telefonoProperty() {
@@ -95,7 +96,7 @@ public class PersonaDTO extends BaseDTO {
     }
 
     public void setProvincia(String value) {
-        provincia.set(value);
+        provincia.set(StringUtil.limpiaCadena(value));
     }
 
     public StringProperty provinciaProperty() {
@@ -108,7 +109,7 @@ public class PersonaDTO extends BaseDTO {
     }
 
     public void setLocalidad(String value) {
-        localidad.set(value);
+        localidad.set(StringUtil.limpiaCadena(value));
     }
 
     public StringProperty localidadProperty() {
@@ -134,7 +135,7 @@ public class PersonaDTO extends BaseDTO {
     }
 
     public void setDireccion(String value) {
-        direccion.set(value);
+        direccion.set(StringUtil.limpiaCadena(value));
     }
 
     public StringProperty direccionProperty() {
@@ -195,7 +196,7 @@ public class PersonaDTO extends BaseDTO {
     }
 
     public void setsApellido(String value) {
-        sApellido.set(value);
+        sApellido.set(StringUtil.limpiaCadena(value));
     }
 
     public StringProperty sApellidoProperty() {
@@ -216,7 +217,7 @@ public class PersonaDTO extends BaseDTO {
     }
 
     public void setpApellido(String value) {
-        pApellido.set(value);
+        pApellido.set(StringUtil.limpiaCadena(value));
     }
 
     public StringProperty pApellidoProperty() {
@@ -240,7 +241,7 @@ public class PersonaDTO extends BaseDTO {
     }
 
     public void setNombre(String nombre) {
-        this.nombre.set(nombre);
+        this.nombre.set(StringUtil.limpiaCadena(nombre));
     }
 
     public StringProperty nombreProperty() {

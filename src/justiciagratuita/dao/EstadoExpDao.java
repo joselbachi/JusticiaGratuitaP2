@@ -96,14 +96,17 @@ public class EstadoExpDao extends BaseDao {
         return null;
     }
     
-    public List<EstadoExpDTO> ListaEstado() {
+    /**
+     * Obtiene un lista de los estados de expediente que no están dados de baja
+     * @return 
+     */
+    public List<EstadoExpDTO> listaEstados() {
 
         ResultSet rs = null;
         Statement statemt = null;
         String checkStr = "select ID, descripcion, descrcorta "
                 + " from ESTADOEXP"
-                + " where id = ? "
-                + " and fecbaja not null";
+                + " where FECBAJA is null";
         
         List<EstadoExpDTO> lista = new ArrayList();
 
@@ -115,7 +118,7 @@ public class EstadoExpDao extends BaseDao {
 
             while (rs.next()) {
                 EstadoExpDTO objeto = new EstadoExpDTO(rs.getInt("ID"), rs.getString("descripcion"), rs.getString("descrcorta"));
-                objeto.setFecBaja(util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecbaja")));
+                //objeto.setFecBaja(util.DateUtil.convertToEntityAttribute(rs.getTimestamp("fecbaja")));
                 lista.add(objeto);
             }
             return lista;

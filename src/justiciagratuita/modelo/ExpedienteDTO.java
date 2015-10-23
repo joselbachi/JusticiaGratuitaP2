@@ -15,6 +15,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import util.StringUtil;
 
 /**
  *
@@ -385,7 +386,7 @@ public class ExpedienteDTO extends BaseDTO {
     }
 
     public void setObservaciones(String observaciones) {
-        this.observaciones.set(observaciones);
+        this.observaciones.set(StringUtil.limpiaCadena(observaciones));
     }
 
     public ObjectProperty<EstadoExpDTO> estadoProperty() {

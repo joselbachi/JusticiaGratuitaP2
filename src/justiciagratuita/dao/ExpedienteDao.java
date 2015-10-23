@@ -294,6 +294,7 @@ public class ExpedienteDao extends BaseDao {
         PreparedStatement ppStatemt = null;
 
         String insrtStr = "UPDATE Expediente set ";
+            insrtStr = insrtStr + "IDSOLICITANTE = '" + expediente.getSolicitante().getId() + "', ";
         if (expediente.getJuzgado() != null && expediente.getJuzgado().getId() > 0) {
             insrtStr = insrtStr + "   IDJUZGADO = ";
             insrtStr = insrtStr + expediente.getJuzgado().getId() + ", ";

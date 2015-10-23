@@ -17,6 +17,7 @@ public class RootLayoutController {
 
     // Reference to the main application
     private JusticiaGratuita mainApp;
+    //private ExpedienteOwController expOwCtrl;
 
     /**
      * Is called by the main application to give a reference back to itself.
@@ -26,12 +27,17 @@ public class RootLayoutController {
     public void setMainApp(JusticiaGratuita mainApp) {
         this.mainApp = mainApp;
     }
+    
+    //public void setExpOwCtrl (ExpedienteOwController expOwCtrl) {
+    //    this.expOwCtrl = expOwCtrl;
+    //}
 
     /**
      * Creates an empty address book.
      */
     @FXML
     private void handleNew() {
+        //expOwCtrl.handleNewExpte();
         //mainApp. getExpedientesData().clear();
         Dialogs.create()
             .title("Falta programación")
@@ -59,5 +65,13 @@ public class RootLayoutController {
     @FXML
     private void handleExit() {
         System.exit(0);
+    }
+    
+    /**
+     * Opens the birthday statistics.
+     */
+    @FXML
+    private void handleShowBirthdayStatistics() {
+        mainApp.showAnnoMesStatistics();
     }
 }

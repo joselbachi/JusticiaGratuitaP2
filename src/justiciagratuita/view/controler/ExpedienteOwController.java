@@ -5,11 +5,17 @@
  */
 package justiciagratuita.view.controler;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import justiciagratuita.JusticiaGratuita;
+import justiciagratuita.dao.EstadoExpDao;
+import justiciagratuita.modelo.EstadoExpDTO;
 import justiciagratuita.modelo.ExpedienteDTO;
 import justiciagratuita.modelo.PersonaDTO;
 import justiciagratuita.modelo.TasuntoDTO;
@@ -31,7 +37,7 @@ public class ExpedienteOwController {
     private TableColumn<ExpedienteDTO, String> numExpteColumn;
     
     @FXML
-    private Label estadoConsultaLabel;
+    private ComboBox estadoConsulta;
     @FXML
     private Label solicitanteNombreField;
     @FXML
@@ -52,6 +58,10 @@ public class ExpedienteOwController {
     private Label numTurnoField;
     @FXML
     private Label estadoField;
+    @FXML
+    private Button editExpBtn;
+    @FXML
+    private Button delExpBtn;
     
     // Reference to the main application.
     private JusticiaGratuita mainApp;
@@ -70,6 +80,7 @@ public class ExpedienteOwController {
     @FXML
     private void initialize() {
 
+        estadoConsulta.setItems(itemsEstadosExp());
         // Initialize the person table with the two columns. Para Java 7
         //firstNameColumn.setCellValueFactory(new PropertyValueFactory<PersonaDTO, String>("nombre"));
         //lastNameColumn.setCellValueFactory(new PropertyValueFactory<PersonaDTO, String>("pApellido"));
@@ -100,6 +111,8 @@ public class ExpedienteOwController {
         // Listen for selection changes and show the person details when changed. Para Java 8
         personTable.getSelectionModel().selectedItemProperty().addListener(
             (observable, oldValue, newValue) -> showExpedienteDetails(newValue));
+        estadoConsulta.getSelectionModel().selectedItemProperty().addListener(
+            (observable, oldValue, newValue) -> cambiaEstadoConsulta((EstadoExpDTO)newValue));
     }
 
     /**
@@ -112,7 +125,7 @@ public class ExpedienteOwController {
 
         // Add observable list data to the table
         personTable.setItems(mainApp.getExpedientesData());
-        estadoConsultaLabel.setText(mainApp.getEstadoExpedientesData().toString());
+        estadoConsulta.setValue(mainApp.getEstadoExpedientesData());
     }
     
     /**
@@ -160,6 +173,13 @@ public class ExpedienteOwController {
             numTurnoField.setText("");
             estadoField.setText("");
         }
+        refrescaBotones(expediente);
+    }
+    
+    private void cambiaEstadoConsulta (EstadoExpDTO estado) {
+        mainApp.setEstadoExpedientesData(estado);
+        mainApp.refrescaExpedientes();
+        refreshPersonTable();
     }
     
     /**
@@ -191,11 +211,12 @@ public class ExpedienteOwController {
      * details for a new person.
      */
     @FXML
-    private void handleNewExpte() {
+    public void handleNewExpte() {
         ExpedienteDTO newExped = new ExpedienteDTO();
         boolean okClicked = mainApp.newExpedienteEditDialog(newExped);
         if (okClicked) {
             mainApp.getExpedientesData().add(newExped);
+            mainApp.refrescaExpedientes();
         }
     }
 
@@ -207,8 +228,8 @@ public class ExpedienteOwController {
     private void handleEditExpte() {
         ExpedienteDTO selectedExped = personTable.getSelectionModel().getSelectedItem();
         Expediente exped = new Expediente();
-        selectedExped = exped.recuperaDatosExpedi(selectedExped);
         if (selectedExped != null) {
+            selectedExped = exped.recuperaDatosExpedi(selectedExped);
             boolean okClicked = mainApp.showExpedienteEditDialog(selectedExped);
             if (okClicked) {
                 refreshPersonTable();
@@ -246,6 +267,24 @@ public class ExpedienteOwController {
         personTable.getSelectionModel().select(selectedIndex);
     }
     
-
+    private void refrescaBotones(ExpedienteDTO expediente) {
+        if (expediente != null && expediente.getEstado().getId() == 1)  {
+            editExpBtn.setDisable(false);
+            editExpBtn.setVisible(true);
+            delExpBtn.setDisable(false);
+            delExpBtn.setVisible(true);
+        } else {
+            editExpBtn.setDisable(true);
+            editExpBtn.setVisible(false);
+            delExpBtn.setDisable(true);
+            delExpBtn.setVisible(false);
+        }
+    }
+    
+    private ObservableList<EstadoExpDTO> itemsEstadosExp() {
+        EstadoExpDao db = new EstadoExpDao();
+        ObservableList<EstadoExpDTO> options = FXCollections.observableArrayList(db.listaEstados());
+        return options;
+    }
 
 }
